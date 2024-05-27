@@ -1,24 +1,30 @@
 import 'package:ferret_erp/features/contabilidad/contabilidad_module.dart';
 import 'package:ferret_erp/features/empleados/empleados_module.dart';
 import 'package:ferret_erp/features/inicio/inicio_module.dart';
+import 'package:ferret_erp/firebase_options.dart';
 import 'package:ferret_erp/main_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 
-void main() {
-  //runApp(const MyApp());
+Future<void> main() async{
+  
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(ModularApp(module: MainModule(), child: const MyApp()));
 }
 
 class MainModule extends Module {
   final List<ModuleRoute> _moduleRoutes = [
-    ModuleRoute('/inicio', module: InicioModule()),
-    ModuleRoute('/empleados', module: EmpleadosModule()),
-    ModuleRoute('/contabilidad', module: ContabilidadModule()),
+    ModuleRoute('/inicio/', module: InicioModule()),
+    ModuleRoute('/empleados/', module: EmpleadosModule()),
+    ModuleRoute('/contabilidad/', module: ContabilidadModule()),
   ];
 
-    List<ModuleRoute> get moduleRoutes => _moduleRoutes;
+  List<ModuleRoute> get moduleRoutes => _moduleRoutes;
 
  @override
   void binds(i) {

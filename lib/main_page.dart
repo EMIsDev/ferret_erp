@@ -19,12 +19,13 @@ class _MainPageState extends State<MainPage> {
           child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          for (final route in MainModule().moduleRoutes)
+            for (final route in MainModule().moduleRoutes)
             ListTile(
-              title: Text(route.name.replaceFirst('/', '').toUpperCase()),
+              title: Text(route.name.replaceAll('/', '').toUpperCase()),
               onTap: () {
                 Modular.to.pop(); // Close the drawer
-                _updateTitle(route.name.replaceFirst('/', '').toUpperCase());
+                _updateTitle(route.name.replaceAll('/', '').toUpperCase());
+                  Modular.to.navigate(route.name );
               },
             ),
         ]
