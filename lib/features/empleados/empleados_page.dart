@@ -15,30 +15,34 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: empleadosController.getEmpleados(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          listaEmpleados = snapshot.data!;
-          return Row(
+    return Row(
+      children: [
+        const OptionMenu(),
+        Expanded(
+          child: Column(
             children: [
-              const OptionMenu(),
-              Expanded(
-                child: Column(
-                  children: [
-                    const Text('Empleado'),
-                    _buildTrabajadorSelector(listaEmpleados),
-                    if (selectedTrabajador.isNotEmpty)
-                      TablaTrabajoEmpleado(trabajador: selectedTrabajador),
-                  ],
-                ),
+              const Text('Empleado'),
+              FutureBuilder(
+                future: empleadosController.getEmpleados(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    listaEmpleados = snapshot.data!;
+                    return Column(
+                      children: [
+                        _buildTrabajadorSelector(listaEmpleados),
+                        if (selectedTrabajador.isNotEmpty)
+                          TablaTrabajoEmpleado(trabajador: selectedTrabajador),
+                      ],
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
               ),
             ],
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
+          ),
+        ),
+      ],
     );
   }
 
