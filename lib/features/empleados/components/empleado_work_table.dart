@@ -15,6 +15,7 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
 
   @override
   Widget build(BuildContext context) {
+    print('ESTOY EN WORK TABLE');
     switch (widget.trabajador.isEmpty) {
       case true:
         return const Text('No hay datos');

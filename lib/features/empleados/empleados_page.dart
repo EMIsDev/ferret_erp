@@ -1,6 +1,7 @@
 import 'package:ferret_erp/features/empleados/components/empleado_work_table.dart';
 import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class EmpleadosPage extends StatefulWidget {
   const EmpleadosPage({super.key});
@@ -41,7 +42,7 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
                         ValueListenableBuilder(
                           valueListenable: _notifier,
                           builder: (context, value, child) {
-                            return listWidgets[_currentIndex];
+                            return RouterOutlet();
                           },
                         )
                       ],
@@ -74,6 +75,7 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
           .toList(),
       onChanged: (value) {
         selectedTrabajador = value!;
+        Modular.to.navigate('/empleados/tablaTrabajos/$selectedTrabajador');
         _notifier.value = !_notifier.value;
       },
     );
@@ -102,6 +104,8 @@ class OptionMenu extends StatelessWidget {
             onTap: () {
               _currentIndex = 0;
               _notifier.value = !_notifier.value;
+              Modular.to
+                  .navigate('/empleados/tablaTrabajos/$selectedTrabajador');
             },
           ),
           ListTile(

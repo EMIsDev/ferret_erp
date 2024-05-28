@@ -1,5 +1,5 @@
 /**
- import 'package:ferret_erp/features/empleados/components/empleado_work_table.dart';
+import 'package:ferret_erp/features/empleados/components/empleado_work_table.dart';
 import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -80,10 +80,6 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
     );
   }
 
-  Widget _buildWidget() {
-    return listWidgets[_currentIndex];
-  }
-
   @override
   void dispose() {
     selectedTrabajador = ""; //reset selectedTrabajador
@@ -121,5 +117,6 @@ class OptionMenu extends StatelessWidget {
     );
   }
 }
+
 
  */
