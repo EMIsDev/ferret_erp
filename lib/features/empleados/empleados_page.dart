@@ -13,6 +13,12 @@ List<Map<String, dynamic>> listaEmpleados = [];
 String selectedTrabajador = "";
 final empleadosController = EmpleadosController();
 ValueNotifier<bool> _notifier = ValueNotifier(false);
+int _currentIndex = 0;
+
+List<Widget> listWidgets = [
+  EmpleadoWorkTable(trabajador: selectedTrabajador),
+  const Text('1')
+];
 
 class _EmpleadosPageState extends State<EmpleadosPage> {
   @override
@@ -35,8 +41,7 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
                         ValueListenableBuilder(
                           valueListenable: _notifier,
                           builder: (context, value, child) {
-                            return EmpleadoWorkTable(
-                                trabajador: selectedTrabajador);
+                            return listWidgets[_currentIndex];
                           },
                         )
                       ],
@@ -81,51 +86,6 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
   }
 }
 
-class TablaTrabajoEmpleado extends StatelessWidget {
-  final String trabajador;
-
-  const TablaTrabajoEmpleado({
-    super.key,
-    required this.trabajador,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // Fetch data for the selected worker based on 'trabajador'
-    // Implement your logic to fetch and display data specific to the worker
-
-    return DataTable(
-      columns: [
-        const DataColumn(
-          label: Expanded(
-            child: Text(
-              'Name',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-        const DataColumn(
-          label: Expanded(
-            child: Text(
-              'Age',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-        const DataColumn(
-          label: Expanded(
-            child: Text(
-              'Role',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-      ],
-      rows: [],
-    );
-  }
-}
-
 class OptionMenu extends StatelessWidget {
   const OptionMenu({
     super.key,
@@ -133,11 +93,24 @@ class OptionMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       width: 200,
       child: Column(
         children: [
-          Expanded(child: Placeholder()),
+          ListTile(
+            title: const Text('Información de empleado'),
+            onTap: () {
+              _currentIndex = 0;
+              _notifier.value = !_notifier.value;
+            },
+          ),
+          ListTile(
+            title: const Text('Trabajos'),
+            onTap: () {
+              _currentIndex = 1;
+              _notifier.value = !_notifier.value;
+            },
+          ),
         ],
       ),
     );
