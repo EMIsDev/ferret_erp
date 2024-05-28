@@ -7,9 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-
-Future<void> main() async{
-  
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -26,21 +24,17 @@ class MainModule extends Module {
 
   List<ModuleRoute> get moduleRoutes => _moduleRoutes;
 
- @override
-  void binds(i) {
-  }
+  @override
+  void binds(i) {}
 
   @override
   void routes(r) {
-   r.child('/',
+    r.child('/',
         child: (context) => const MainPage(),
         children: _moduleRoutes,
         transition: TransitionType.fadeIn);
   }
-
-  
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -58,5 +52,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

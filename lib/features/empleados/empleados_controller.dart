@@ -16,6 +16,31 @@ class EmpleadosController {
     }
   }
 
+  Future<Map<String, dynamic>> getEmpleadoById({required empleadoId}) async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection('empleados').doc(empleadoId).get();
+      return documentSnapshot.data() as Map<String, dynamic>;
+    } catch (e) {
+      print('Error getting empleado by id: $e');
+      return {};
+    }
+  }
+
+  Future<List<Map<String, dynamic>>?> getEmpleadosIdAndName() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('empleados').get();
+      List<Map<String, dynamic>> empleados = querySnapshot.docs
+          .map((doc) => {'id': doc.id, 'nombre': doc['nombre']})
+          .toList();
+      return empleados;
+    } catch (e) {
+      print('Error getting empleados: $e');
+      return [];
+    }
+  }
+
   Future<void> addEmpleado(Map<String, dynamic> empleado) async {
     try {
       await _firestore.collection('empleados').add(empleado);

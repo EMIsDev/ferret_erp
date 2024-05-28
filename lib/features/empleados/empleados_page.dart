@@ -1,3 +1,4 @@
+import 'package:ferret_erp/features/empleados/components/empleado_work_table.dart';
 import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -8,11 +9,12 @@ class EmpleadosPage extends StatefulWidget {
   State<EmpleadosPage> createState() => _EmpleadosPageState();
 }
 
-class _EmpleadosPageState extends State<EmpleadosPage> {
-  final empleadosController = EmpleadosController();
-  List<dynamic> listaEmpleados = [];
-  String selectedTrabajador = "";
+List<Map<String, dynamic>> listaEmpleados = [];
+String selectedTrabajador = "";
+final empleadosController = EmpleadosController();
+ValueNotifier<bool> _notifier = ValueNotifier(false);
 
+class _EmpleadosPageState extends State<EmpleadosPage> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -23,19 +25,29 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
             children: [
               const Text('Empleado'),
               FutureBuilder(
-                future: empleadosController.getEmpleados(),
+                future: empleadosController.getEmpleadosIdAndName(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     listaEmpleados = snapshot.data!;
                     return Column(
                       children: [
                         _buildTrabajadorSelector(listaEmpleados),
-                        if (selectedTrabajador.isNotEmpty)
-                          TablaTrabajoEmpleado(trabajador: selectedTrabajador),
+                        ValueListenableBuilder(
+                          valueListenable: _notifier,
+                          builder: (context, value, child) {
+                            return EmpleadoWorkTable(
+                                trabajador: selectedTrabajador);
+                          },
+                        )
                       ],
                     );
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height / 1.3,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
                   }
                 },
               ),
@@ -46,25 +58,26 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
     );
   }
 
-  Widget _buildTrabajadorSelector(List<dynamic> listaEmpleados) {
-    //print(listaEmpleados.first['nombre']);
-    // Extract worker names from listaEmpleados (assuming it contains names)
-    List<String> workerNames =
-        listaEmpleados.map((e) => e['nombre'] as String).toList();
-    workerNames.map((e) => print(e));
+  Widget _buildTrabajadorSelector(List<Map<String, dynamic>> listaEmpleados) {
     return DropdownButtonFormField<String>(
-      items: workerNames
-          .map((name) => DropdownMenuItem(
-                value: name,
-                child: Text(name),
+      hint: const Text('Seleccione un trabajador'),
+      items: listaEmpleados
+          .map<DropdownMenuItem<String>>((empleado) => DropdownMenuItem<String>(
+                value: empleado['id'],
+                child: Text(empleado['nombre']),
               ))
           .toList(),
       onChanged: (value) {
-        setState(() {
-          selectedTrabajador = value!; // Update state on selection
-        });
+        selectedTrabajador = value!;
+        _notifier.value = !_notifier.value;
       },
     );
+  }
+
+  @override
+  void dispose() {
+    selectedTrabajador = ""; //reset selectedTrabajador
+    super.dispose();
   }
 }
 
@@ -113,70 +126,6 @@ class TablaTrabajoEmpleado extends StatelessWidget {
   }
 }
 
-/*
-
-class TablaTrabajoEmpleado extends StatelessWidget {
-  const TablaTrabajoEmpleado({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return DataTable(
-      columns: const <DataColumn>[
-        DataColumn(
-          label: Expanded(
-            child: Text(
-              'Name',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Text(
-              'Age',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Text(
-              'Role',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ),
-      ],
-      rows: const <DataRow>[
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Sarah')),
-            DataCell(Text('19')),
-            DataCell(Text('Student')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('Janine')),
-            DataCell(Text('43')),
-            DataCell(Text('Professor')),
-          ],
-        ),
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('William')),
-            DataCell(Text('27')),
-            DataCell(Text('Associate Professor')),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-*/
 class OptionMenu extends StatelessWidget {
   const OptionMenu({
     super.key,
