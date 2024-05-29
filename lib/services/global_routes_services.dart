@@ -1,7 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-class RouteService {
+class GlobalRoutesService {
   final List<ModuleRoute> moduleRoutes;
 
-  const RouteService(this.moduleRoutes);
+  const GlobalRoutesService(this.moduleRoutes);
 }

@@ -14,7 +14,6 @@ List<Map<String, dynamic>> listaEmpleados = [];
 String selectedTrabajador = "";
 final empleadosController = EmpleadosController();
 ValueNotifier<bool> _notifier = ValueNotifier(false);
-int _currentIndex = 0;
 
 List<Widget> listWidgets = [
   EmpleadoWorkTable(trabajador: selectedTrabajador),
@@ -24,6 +23,8 @@ List<Widget> listWidgets = [
 class _EmpleadosPageState extends State<EmpleadosPage> {
   @override
   Widget build(BuildContext context) {
+    print(Modular.routerDelegate.currentConfiguration?.routes);
+
     return Row(
       children: [
         const OptionMenu(),
@@ -39,12 +40,7 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
                     return Column(
                       children: [
                         _buildTrabajadorSelector(listaEmpleados),
-                        ValueListenableBuilder(
-                          valueListenable: _notifier,
-                          builder: (context, value, child) {
-                            return RouterOutlet();
-                          },
-                        )
+                        const RouterOutlet(),
                       ],
                     );
                   } else {
@@ -75,8 +71,12 @@ class _EmpleadosPageState extends State<EmpleadosPage> {
           .toList(),
       onChanged: (value) {
         selectedTrabajador = value!;
-        Modular.to.navigate('/empleados/tablaTrabajos/$selectedTrabajador');
         _notifier.value = !_notifier.value;
+        //Coger ruta actual sin args para navegar en ella con el nuevo valor de selectedTrabajador
+        String rutaActual = Modular.to.path;
+        int lastSlashIndex = rutaActual.lastIndexOf('/');
+        String rootPath = rutaActual.substring(0, lastSlashIndex + 1);
+        Modular.to.navigate(rootPath + selectedTrabajador);
       },
     );
   }
@@ -102,17 +102,14 @@ class OptionMenu extends StatelessWidget {
           ListTile(
             title: const Text('Información de empleado'),
             onTap: () {
-              _currentIndex = 0;
-              _notifier.value = !_notifier.value;
-              Modular.to
-                  .navigate('/empleados/tablaTrabajos/$selectedTrabajador');
+              Modular.to.navigate('/empleados/info/$selectedTrabajador');
             },
           ),
           ListTile(
             title: const Text('Trabajos'),
             onTap: () {
-              _currentIndex = 1;
-              _notifier.value = !_notifier.value;
+              Modular.to
+                  .navigate('/empleados/tablaTrabajos/$selectedTrabajador');
             },
           ),
         ],

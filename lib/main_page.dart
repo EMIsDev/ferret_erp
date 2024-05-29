@@ -12,11 +12,21 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String _title = 'Home Page'; // Initial title
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
       drawer: Drawer(
           child: ListView(padding: EdgeInsets.zero, children: [
+        const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Text('Drawer Header')),
         for (final route in MainModule().moduleRoutes)
           ListTile(
             title: Text(route.name.replaceAll('/', '').toUpperCase()),
@@ -27,12 +37,7 @@ class _MainPageState extends State<MainPage> {
             },
           ),
       ])),
-      body: const Column(
-        // Or Row depending on your layout
-        children: [
-          Expanded(child: RouterOutlet()),
-        ],
-      ),
+      body: RouterOutlet(),
     );
   }
 

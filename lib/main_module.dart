@@ -25,7 +25,9 @@ class MainModule extends Module {
   List<ModuleRoute> get moduleRoutes => _moduleRoutes;
 
   @override
-  void binds(i) {}
+  void binds(i) {
+    //  i.addLazySingleton(); // agregar singleton que se encargue de guardar las rutas.
+  }
 
   @override
   void routes(r) {
