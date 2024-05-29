@@ -15,7 +15,6 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
 
   @override
   Widget build(BuildContext context) {
-    print('ESTOY EN WORK TABLE');
     switch (widget.trabajador.isEmpty) {
       case true:
         return const Text('No hay datos');
@@ -25,8 +24,14 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
                 empleadoId: widget.trabajador),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.data == null) return const Text('No hay datos');
-                return _buildWorkTables(listaTrabajos: snapshot.data!);
+                print(snapshot.data);
+                if (snapshot.data == null) {
+                  return const Text('No hay datos');
+                }
+
+                return SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: _buildWorkTables(listaTrabajos: snapshot.data!));
               } else {
                 return SizedBox(
                   height: MediaQuery.of(context).size.height / 1.3,
@@ -47,16 +52,19 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
 }
 
 Widget _buildWorkTables({required List<Map<String, dynamic>> listaTrabajos}) {
-  return DataTable(
-    columns: const [
-      DataColumn(label: Text('Descripcion')),
-      DataColumn(label: Text('Inicio')),
-      DataColumn(label: Text('Final')),
-      DataColumn(label: Text('Total Horas'))
-    ],
-    rows: listaTrabajos
-        .map((trabajo) => _buildWorkTableRow(trabajo))
-        .toList(), // Use map and _buildWorkTableRow function
+  return SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: DataTable(
+      columns: const [
+        DataColumn(label: Text('Descripcion')),
+        DataColumn(label: Text('Inicio')),
+        DataColumn(label: Text('Final')),
+        DataColumn(label: Text('Total Horas'))
+      ],
+      rows: listaTrabajos
+          .map((trabajo) => _buildWorkTableRow(trabajo))
+          .toList(), // Use map and _buildWorkTableRow function
+    ),
   );
 }
 

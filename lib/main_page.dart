@@ -1,4 +1,4 @@
-import 'package:ferret_erp/main_module.dart';
+import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -18,27 +18,93 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    SideMenuController sideMenuController = SideMenuController();
+
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
-      drawer: Drawer(
-          child: ListView(padding: EdgeInsets.zero, children: [
-        const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
-            child: Text('Drawer Header')),
-        for (final route in MainModule().moduleRoutes)
-          ListTile(
-            title: Text(route.name.replaceAll('/', '').toUpperCase()),
-            onTap: () {
-              Modular.to.pop(); // Close the drawer
-              _updateTitle(route.name.replaceAll('/', '').toUpperCase());
-              Modular.to.navigate(route.name);
-            },
-          ),
-      ])),
-      body: RouterOutlet(),
+      body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        _buildSideMenu(sideMenuController: sideMenuController),
+        const VerticalDivider(
+          width: 0,
+        ),
+        Expanded(child: const RouterOutlet())
+      ]),
     );
+  }
+
+  Widget _buildSideMenu({required SideMenuController sideMenuController}) {
+    return SideMenu(
+        style: SideMenuStyle(
+            openSideMenuWidth: 215,
+            // showTooltip: false,
+            displayMode: SideMenuDisplayMode.auto,
+            showHamburger: true,
+            hoverColor: Colors.blue[100],
+            selectedHoverColor: Colors.blue[100],
+            selectedColor: Colors.lightBlue,
+            selectedTitleTextStyle: const TextStyle(color: Colors.black),
+            selectedIconColor: Colors.black,
+            // decoration: BoxDecoration(
+            //   borderRadius: BorderRadius.all(Radius.circular(10)),
+            // ),
+            backgroundColor: Colors.grey[200]),
+        items: [
+          SideMenuItem(
+            title: 'Inicio',
+            onTap: (index, _) {
+              sideMenuController.changePage(index);
+              Modular.to.navigate('/inicio/');
+            },
+            icon: const Icon(Icons.home),
+          ),
+          SideMenuExpansionItem(
+            title: "Empleados",
+            icon: const Icon(Icons.person),
+            children: [
+              SideMenuItem(
+                title: 'Agregar Trabajo',
+                onTap: (index, _) {
+                  sideMenuController.changePage(index);
+                  _updateTitle('');
+                  Modular.to.navigate('/empleados/agregarTrabajo/');
+                },
+                icon: const Icon(Icons.handyman),
+              ),
+              SideMenuItem(
+                title: 'Historial Trabajo',
+                onTap: (index, _) {
+                  sideMenuController.changePage(index);
+                  _updateTitle('');
+                  Modular.to.navigate('/empleados/historialTrabajo/');
+                },
+                icon: const Icon(Icons.history),
+              ),
+              SideMenuItem(
+                title: 'Editar Empleado',
+                onTap: (index, _) {
+                  sideMenuController.changePage(index);
+                },
+                icon: const Icon(Icons.edit),
+              ),
+              SideMenuItem(
+                title: 'Conteo Horas',
+                onTap: (index, _) {
+                  sideMenuController.changePage(index);
+                  Modular.to.navigate('/empleados/tablaTrabajos/');
+                },
+                icon: const Icon(Icons.watch),
+              ),
+              SideMenuItem(
+                title: 'Eliminar Empleado',
+                onTap: (index, _) {
+                  sideMenuController.changePage(index);
+                },
+                icon: const Icon(Icons.delete),
+              )
+            ],
+          )
+        ],
+        controller: sideMenuController);
   }
 
   void _updateTitle(String newTitle) {
@@ -47,3 +113,15 @@ class _MainPageState extends State<MainPage> {
     });
   }
 }
+
+/*
+for (final route in MainModule().moduleRoutes)
+          ListTile(
+            title: Text(route.name.replaceAll('/', '').toUpperCase()),
+            onTap: () {
+              Modular.to.pop(); // Close the drawer
+              _updateTitle(route.name.replaceAll('/', '').toUpperCase());
+              Modular.to.navigate(route.name);
+            },
+          ),
+ */
