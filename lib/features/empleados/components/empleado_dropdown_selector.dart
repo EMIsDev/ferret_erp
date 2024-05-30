@@ -8,16 +8,17 @@ class EmpleadoDropdownSelector extends StatelessWidget {
   });
 
   final List<Map<String, dynamic>> listaEmpleados;
-  final Function(String) refreshNotifier;
+  final Function(dynamic) refreshNotifier;
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
+    return DropdownButtonFormField<Map<String, dynamic>>(
       hint: const Text('Seleccione un trabajador'),
       items: listaEmpleados
-          .map<DropdownMenuItem<String>>((empleado) => DropdownMenuItem<String>(
-                value: empleado['id'],
-                child: Text(empleado['nombre']),
-              ))
+          .map<DropdownMenuItem<Map<String, dynamic>>>(
+              (empleado) => DropdownMenuItem<Map<String, dynamic>>(
+                    value: empleado,
+                    child: Text(empleado['nombre']),
+                  ))
           .toList(),
       onChanged: (value) {
         refreshNotifier(value!);

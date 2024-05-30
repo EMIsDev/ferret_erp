@@ -36,7 +36,7 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
                       builder: (context, value, child) {
                         if (selectedTrabajador.isNotEmpty) {
                           return EmpleadoWorkTable(
-                              trabajador: selectedTrabajador);
+                              trabajadorId: selectedTrabajador);
                         } else {
                           return const SizedBox();
                         }
@@ -57,8 +57,9 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
     );
   }
 
-  void refreshNotifier(String idTrabajador) {
-    selectedTrabajador = idTrabajador;
+  void refreshNotifier(dynamic idTrabajador) {
+    selectedTrabajador = idTrabajador['id'];
+    print(selectedTrabajador);
     _notifier.value = !_notifier.value;
   }
 

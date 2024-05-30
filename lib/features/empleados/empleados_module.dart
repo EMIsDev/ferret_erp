@@ -8,8 +8,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 class EmpleadosModule extends Module {
   final List<ChildRoute> _moduleRoutes = [
     ChildRoute('/tablaTrabajos/:idTrabajador',
-        child: (context) =>
-            EmpleadoWorkTable(trabajador: Modular.args.params['idTrabajador'])),
+        child: (context) => EmpleadoWorkTable(
+            trabajadorId: Modular.args.params['idTrabajador'])),
     ChildRoute('/info/:idTrabajador',
         child: (context) =>
             EmpleadoInfoCard(trabajador: Modular.args.params['idTrabajador'])),

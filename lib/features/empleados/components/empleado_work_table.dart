@@ -2,9 +2,9 @@ import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
 
 class EmpleadoWorkTable extends StatefulWidget {
-  final String trabajador;
+  final String trabajadorId;
 
-  const EmpleadoWorkTable({super.key, required this.trabajador});
+  const EmpleadoWorkTable({super.key, required this.trabajadorId});
 
   @override
   State<EmpleadoWorkTable> createState() => _EmpleadoWorkTableState();
@@ -15,13 +15,13 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.trabajador.isEmpty) {
+    switch (widget.trabajadorId.isEmpty) {
       case true:
         return const Text('No hay datos');
       case false:
         return FutureBuilder(
             future: empleadosController.getEmpleadoTrabajos(
-                empleadoId: widget.trabajador),
+                empleadoId: widget.trabajadorId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.data == null) {
