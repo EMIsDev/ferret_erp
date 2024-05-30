@@ -59,7 +59,6 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
 
   void refreshNotifier(dynamic idTrabajador) {
     selectedTrabajador = idTrabajador['id'];
-    print(selectedTrabajador);
     _notifier.value = !_notifier.value;
   }
 

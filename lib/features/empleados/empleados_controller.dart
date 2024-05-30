@@ -134,7 +134,6 @@ class EmpleadosController {
       // Agregar trabajo a la coleccion de trabajos
       DocumentReference trabajoRef =
           await _firestore.collection('trabajos').add(trabajoConHoras);
-      print(trabajoRef.id);
       // Agregar referencia del trabajo a cada empleado
       for (Map<String, dynamic> empleado in empleados) {
         DocumentReference empleadoRef =
