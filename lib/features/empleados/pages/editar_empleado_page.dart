@@ -35,7 +35,9 @@ class _EditarEmpleadoState extends State<EditarEmpleado> {
                       valueListenable: _notifier,
                       builder: (context, value, child) {
                         if (selectedTrabajador.isNotEmpty) {
-                          return EmpleadoForm(trabajador: selectedTrabajador);
+                          return EmpleadoForm(
+                              trabajador: selectedTrabajador,
+                              refreshNotifier: refreshNotifier);
                         } else {
                           return const SizedBox();
                         }

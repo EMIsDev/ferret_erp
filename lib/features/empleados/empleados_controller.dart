@@ -82,15 +82,16 @@ class EmpleadosController {
     }
   }
 
-  Future<void> updateEmpleado(
-      String empleadoId, Map<String, dynamic> updatedData) async {
+  Future<bool> updateEmpleado(Map<String, dynamic> updatedData) async {
     try {
       await _firestore
           .collection('empleados')
-          .doc(empleadoId)
+          .doc(updatedData['id'])
           .update(updatedData);
+      return true; // Update successful
     } catch (e) {
       print('Error updating empleado: $e');
+      return false; // Update failed
     }
   }
 

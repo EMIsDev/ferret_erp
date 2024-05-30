@@ -1,4 +1,3 @@
-import 'package:ferret_erp/features/empleados/components/empleado_form.dart';
 import 'package:ferret_erp/features/empleados/components/empleado_work_table.dart';
 import 'package:ferret_erp/features/empleados/empleados_page.dart';
 import 'package:ferret_erp/features/empleados/pages/agregar_trabajo_page.dart';
@@ -12,8 +11,7 @@ class EmpleadosModule extends Module {
         child: (context) => EmpleadoWorkTable(
             trabajadorId: Modular.args.params['idTrabajador'])),
     ChildRoute('/info/:idTrabajador',
-        child: (context) =>
-            EmpleadoForm(trabajador: Modular.args.params['idTrabajador'])),
+        child: (context) => const EditarEmpleado()),
     ChildRoute('/agregarTrabajo/',
         child: (context) => const AgregarTrabajoPage()),
     ChildRoute('/historialTrabajo/',

@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 
 class EmpleadoForm extends StatefulWidget {
   final String trabajador;
+  final Function(dynamic) refreshNotifier;
 
-  const EmpleadoForm({super.key, required this.trabajador});
+  const EmpleadoForm({
+    super.key,
+    required this.trabajador,
+    required this.refreshNotifier,
+  });
 
   @override
   State<EmpleadoForm> createState() => _EmpleadoFormState();
@@ -14,7 +19,7 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
   final empleadosController = EmpleadosController();
   final GlobalKey<FormState> _formularioEstado = GlobalKey<FormState>();
   Map<String, dynamic> empleado = {};
-  final Map<String, TextEditingController> clientFormController = {
+  final Map<String, TextEditingController> trabajadorFormController = {
     'nombre': TextEditingController(),
     'apellido': TextEditingController(),
     'telefono': TextEditingController()
@@ -23,16 +28,22 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
 
-    for (MapEntry e in clientFormController.entries) {
+    for (MapEntry e in trabajadorFormController.entries) {
       res.putIfAbsent(e.key,
           () => e.value?.text.isNotEmpty ? e.value.text : empleado[e.key]);
     }
-    res['idTrabajador'] = widget.trabajador;
+    res['id'] = widget.trabajador;
     return res;
   }
 
-  Future<int> _updateEmpleado(formData) async {
-    return await Future.delayed(const Duration(seconds: 2), () => 1);
+  Future<bool> _updateEmpleado(formData) async {
+    return await empleadosController.updateEmpleado(formData);
+  }
+
+  void _populateFormFields() {
+    for (MapEntry e in trabajadorFormController.entries) {
+      trabajadorFormController[e.key]!.text = empleado[e.key].toString();
+    }
   }
 
   @override
@@ -48,6 +59,7 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.data == null) return const Text('No hay datos');
                 empleado = snapshot.data as Map<String, dynamic>;
+                _populateFormFields();
                 return SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Form(
@@ -61,7 +73,7 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(color: Colors.grey)),
                               child: TextFormField(
-                                controller: clientFormController['nombre'],
+                                controller: trabajadorFormController['nombre'],
                                 validator: (value) {
                                   if (value!.isNotEmpty) {
                                     return null; // todo ok
@@ -85,7 +97,8 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(color: Colors.grey)),
                               child: TextFormField(
-                                controller: clientFormController['apellido'],
+                                controller:
+                                    trabajadorFormController['apellido'],
                                 validator: (value) {
                                   if (value!.isNotEmpty) {
                                     return null; // todo ok
@@ -100,46 +113,112 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
                                   labelText: 'apellido',
                                 ),
                               )),
-                          Expanded(
-                            //con esto hacemos la separación del boton de enviar
-                            child: Container(),
+                          const SizedBox(
+                            height: 10,
                           ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (_formularioEstado.currentState!
-                                    .validate()) {
-                                  _formularioEstado.currentState!.save();
-                                  final formData = getFormData();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Procesando')),
-                                  );
-                                  _updateEmpleado(formData).then((value) {
-                                    if (!value.isNaN) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Actualizado'),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                      Navigator.pop(context);
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Error'),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-                                  });
-                                }
-                              },
-                              child: const Text('Actualizar'),
+                          Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey)),
+                              child: TextFormField(
+                                controller:
+                                    trabajadorFormController['telefono'],
+                                validator: (value) {
+                                  if (value!.isNotEmpty) {
+                                    return null; // todo ok
+                                  } else {
+                                    // return 'Error en validacion'; // mal
+                                    return null;
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  hintText: '${empleado['telefono']}',
+                                  border: InputBorder.none,
+                                  labelText: 'telefono',
+                                ),
+                              )),
+                          Row(children: [
+                            SizedBox(
+                              //width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formularioEstado.currentState!
+                                      .validate()) {
+                                    _formularioEstado.currentState!.save();
+                                    final formData = getFormData();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Procesando')),
+                                    );
+                                    _updateEmpleado(formData).then((value) {
+                                      if (value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: const Text('Actualizado'),
+                                            backgroundColor: Colors.green,
+                                            onVisible: () {
+                                              widget.refreshNotifier(formData);
+                                            },
+                                          ),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Error'),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    });
+                                  }
+                                },
+                                child: const Text('Actualizar'),
+                              ),
                             ),
-                          )
+                            SizedBox(
+                              //width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formularioEstado.currentState!
+                                      .validate()) {
+                                    _formularioEstado.currentState!.save();
+                                    final formData = getFormData();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Procesando')),
+                                    );
+                                    _updateEmpleado(formData).then((value) {
+                                      if (value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text('Actualizado'),
+                                            backgroundColor: Colors.green,
+                                            onVisible: () {
+                                              widget.refreshNotifier(formData);
+                                            },
+                                          ),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Error'),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    });
+                                  }
+                                },
+                                child: const Text('Eliminar'),
+                              ),
+                            ),
+                          ])
                         ],
                       )),
                 );
