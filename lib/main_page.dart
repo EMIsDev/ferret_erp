@@ -27,7 +27,7 @@ class _MainPageState extends State<MainPage> {
         const VerticalDivider(
           width: 0,
         ),
-        Expanded(child: const RouterOutlet())
+        const Expanded(child: RouterOutlet())
       ]),
     );
   }
@@ -65,7 +65,7 @@ class _MainPageState extends State<MainPage> {
                 title: 'Agregar Trabajo',
                 onTap: (index, _) {
                   sideMenuController.changePage(index);
-                  _updateTitle('');
+                  _updateTitle('Agregar Trabajo');
                   Modular.to.navigate('/empleados/agregarTrabajo/');
                 },
                 icon: const Icon(Icons.handyman),
@@ -74,7 +74,7 @@ class _MainPageState extends State<MainPage> {
                 title: 'Historial Trabajo',
                 onTap: (index, _) {
                   sideMenuController.changePage(index);
-                  _updateTitle('');
+                  _updateTitle('Historial Trabajo');
                   Modular.to.navigate('/empleados/historialTrabajo/');
                 },
                 icon: const Icon(Icons.history),
@@ -82,6 +82,8 @@ class _MainPageState extends State<MainPage> {
               SideMenuItem(
                 title: 'Editar Empleado',
                 onTap: (index, _) {
+                  _updateTitle('Editar Empleado');
+
                   sideMenuController.changePage(index);
                 },
                 icon: const Icon(Icons.edit),
@@ -89,6 +91,8 @@ class _MainPageState extends State<MainPage> {
               SideMenuItem(
                 title: 'Conteo Horas',
                 onTap: (index, _) {
+                  _updateTitle('Conteo Horas');
+
                   sideMenuController.changePage(index);
                   Modular.to.navigate('/empleados/tablaTrabajos/');
                 },
@@ -97,6 +101,8 @@ class _MainPageState extends State<MainPage> {
               SideMenuItem(
                 title: 'Eliminar Empleado',
                 onTap: (index, _) {
+                  _updateTitle('Eliminar Empleado');
+
                   sideMenuController.changePage(index);
                 },
                 icon: const Icon(Icons.delete),

@@ -5,6 +5,7 @@ import 'package:ferret_erp/firebase_options.dart';
 import 'package:ferret_erp/main_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 Future<void> main() async {
@@ -51,6 +52,14 @@ class MyApp extends StatelessWidget {
               seedColor: Colors.amberAccent, brightness: Brightness.light)),
       debugShowCheckedModeBanner: false,
       routerConfig: Modular.routerConfig,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es'),
+      ],
     );
   }
 }

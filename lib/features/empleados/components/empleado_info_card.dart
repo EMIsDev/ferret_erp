@@ -15,7 +15,6 @@ class _EmpleadoInfoCardState extends State<EmpleadoInfoCard> {
 
   @override
   Widget build(BuildContext context) {
-    print('ESTOY EN INFO CARD');
     switch (widget.trabajador.isEmpty) {
       case true:
         return const Text('No hay datos');

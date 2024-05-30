@@ -24,7 +24,6 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
                 empleadoId: widget.trabajador),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                print(snapshot.data);
                 if (snapshot.data == null) {
                   return const Text('No hay datos');
                 }
