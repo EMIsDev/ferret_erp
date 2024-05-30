@@ -101,4 +101,50 @@ class EmpleadosController {
       print('Error deleting empleado: $e');
     }
   }
+
+  // la funcion se llama addWorkToEmployee esta recibira una lista de empleados que hayan hecho el trabajo y el trabajo que se realizo,
+  // este trabajo tiene descripcion, fecha inicio, fecha final, hora inicio, hora final, con esto quiero calcular el total de horas trabajadas
+  // y finalmente almacenar este trabajo con las horas totales y asignar este trabajo a los empleados que lo realizaron
+  Future<void> addWorkToEmployee(
+      {required List<Map<String, dynamic>> empleados,
+      required Map<String, dynamic> trabajo}) async {
+    try {
+      // Calculo de horas trabajadas
+      DateTime inicioTrabajo = trabajo['fecha_inicio'];
+      DateTime finalTrabajo = trabajo['fecha_final'];
+      int diasTrabajados = finalTrabajo.difference(inicioTrabajo).inDays;
+
+      DateTime horaInicio = trabajo['hora_inicio_trabajo'];
+      DateTime horaFinal = trabajo['hora_final_trabajo'];
+      //calculate the total of hours worked with horaInicio and HoraFinal
+      int horasTrabajadas = horaFinal.difference(horaInicio).inHours;
+      int minutosTrabajados = horaFinal.difference(horaInicio).inMinutes % 60;
+      // Crear trabajo con horas y minutos trabajados
+      double horasTrabajadasDecimal =
+          horasTrabajadas + (minutosTrabajados / 60);
+
+      Map<String, dynamic> trabajoConHoras = {
+        'descripcion': trabajo['descripcion'],
+        'inicio_trabajo': trabajo['fecha_inicio'],
+        'final_trabajo': trabajo['fecha_final'],
+        'horas_trabajadas': DateFormat('HH:mm')
+            .format(DateTime(0, 0, 0, horasTrabajadas, minutosTrabajados))
+      };
+
+      // Agregar trabajo a la coleccion de trabajos
+      DocumentReference trabajoRef =
+          await _firestore.collection('trabajos').add(trabajoConHoras);
+      print(trabajoRef.id);
+      // Agregar referencia del trabajo a cada empleado
+      for (Map<String, dynamic> empleado in empleados) {
+        DocumentReference empleadoRef =
+            _firestore.collection('empleados').doc(empleado['id']);
+        await empleadoRef.update({
+          'lista_trabajos': FieldValue.arrayUnion([trabajoRef])
+        });
+      }
+    } catch (e) {
+      print('Error adding work to employee: $e');
+    }
+  }
 }

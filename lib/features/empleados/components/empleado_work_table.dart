@@ -71,12 +71,12 @@ DataRow _buildWorkTableRow(Map<String, dynamic> trabajo) {
   String descripcion = trabajo['descripcion'] ?? '';
   String inicioTrabajo = trabajo['inicio_trabajo']?.toString() ?? '';
   String finalTrabajo = trabajo['final_trabajo']?.toString() ?? '';
-  String totalHoras = trabajo['total_horas']?.toString() ?? '';
+  String totalHoras = trabajo['horas_trabajadas']?.toString() ?? '';
 
   return DataRow(cells: [
     DataCell(Text(descripcion)),
     DataCell(Text(inicioTrabajo)),
     DataCell(Text(finalTrabajo)),
-    DataCell(Text(totalHoras)),
+    DataCell(Text('${totalHoras}h')),
   ]);
 }

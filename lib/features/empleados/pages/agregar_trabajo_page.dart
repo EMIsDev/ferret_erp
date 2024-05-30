@@ -14,6 +14,8 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
   final _descripcionController =
       TextEditingController(); // Controller for description
   DateTime _selectedDateInicio = DateTime.now(); // Initial selected date
+  DateTime _selectedDateFinal = DateTime.now(); // Initial selected date
+
   DateTime _horaInicio = DateTime.now(); // Initial time for work start
   DateTime _horaFinal =
       DateTime.now(); // Initial time for work endtial end date
@@ -67,12 +69,12 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                   ),
                   ListTile(
                     title: Text(
-                        'Fecha Final: ${DateFormat('dd/MM/yyyy').format(_selectedDateInicio)}'),
+                        'Fecha Final: ${DateFormat('dd/MM/yyyy').format(_selectedDateFinal)}'),
                     trailing: const Icon(Icons.calendar_today),
                     onTap: () async {
                       final selectedDate = await showDatePicker(
                         context: context,
-                        initialDate: _selectedDateInicio,
+                        initialDate: _selectedDateFinal,
                         firstDate:
                             DateTime.now().subtract(const Duration(days: 365)),
                         lastDate: DateTime.now(),
@@ -80,7 +82,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                       );
                       if (selectedDate != null) {
                         setState(() {
-                          _selectedDateInicio = selectedDate;
+                          _selectedDateFinal = selectedDate;
                         });
                       }
                     },
@@ -154,7 +156,6 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                                 ? null
                                 : _listaEmpleadosSeleccionados
                                     .add(selectedTrabajador);
-
                             _notifier.value = !_notifier
                                 .value; //notificar cambios en la lista para actualizar UI lista
                           }
@@ -165,18 +166,26 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                   ValueListenableBuilder(
                     valueListenable: _notifier,
                     builder: (context, value, child) => Container(
+                      height: 200,
                       color: Colors.grey[200],
                       child: _listaEmpleadosSeleccionados.isNotEmpty
                           ? SingleChildScrollView(
                               child: ListView.builder(
-                                shrinkWrap:
-                                    true, // Important for proper scrolling
+                                shrinkWrap: true,
                                 itemCount: _listaEmpleadosSeleccionados.length,
                                 itemBuilder: (context, index) {
                                   final item =
                                       _listaEmpleadosSeleccionados[index];
                                   return ListTile(
                                     title: Text(item['nombre']),
+                                    trailing: IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () {
+                                        _listaEmpleadosSeleccionados
+                                            .removeAt(index);
+                                        _notifier.value = !_notifier.value;
+                                      },
+                                    ),
                                   );
                                 },
                               ),
@@ -186,11 +195,17 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                   ),
                   ElevatedButton(
                     child: const Text('Agregar Trabajo'),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // Calculate total hours using _horaFinal.difference(_horaInicio)
-                        // Perform saving logic using _descripcionController.text,
-                        // _selectedDateInicio, _horaInicio, and _horaFinal
+                        await empleadosController.addWorkToEmployee(
+                            empleados: _listaEmpleadosSeleccionados,
+                            trabajo: {
+                              'descripcion': _descripcionController.text,
+                              'hora_inicio_trabajo': _horaInicio,
+                              'hora_final_trabajo': _horaFinal,
+                              'fecha_inicio': _selectedDateInicio,
+                              'fecha_final': _selectedDateFinal,
+                            });
                       }
                     },
                   ),

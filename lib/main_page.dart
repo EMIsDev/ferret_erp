@@ -83,6 +83,7 @@ class _MainPageState extends State<MainPage> {
                 title: 'Editar Empleado',
                 onTap: (index, _) {
                   _updateTitle('Editar Empleado');
+                  Modular.to.navigate('/empleados/editarEmpleado/');
 
                   sideMenuController.changePage(index);
                 },
