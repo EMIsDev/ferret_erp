@@ -20,6 +20,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
   ValueNotifier<bool> _notifier = ValueNotifier(false);
   Map<String, dynamic> selectedTrabajador = {};
   List<Map<String, dynamic>> _listaEmpleados = [];
+  List<Map<String, dynamic>> _listaEmpleadosSeleccionados = [];
 
   @override
   Widget build(BuildContext context) {
@@ -147,10 +148,41 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                       IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
-                          _listaEmpleados.add(selectedTrabajador);
+                          if (selectedTrabajador.isNotEmpty) {
+                            _listaEmpleadosSeleccionados
+                                    .contains(selectedTrabajador)
+                                ? null
+                                : _listaEmpleadosSeleccionados
+                                    .add(selectedTrabajador);
+
+                            _notifier.value = !_notifier
+                                .value; //notificar cambios en la lista para actualizar UI lista
+                          }
                         },
                       ),
                     ],
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: _notifier,
+                    builder: (context, value, child) => Container(
+                      color: Colors.grey[200],
+                      child: _listaEmpleadosSeleccionados.isNotEmpty
+                          ? SingleChildScrollView(
+                              child: ListView.builder(
+                                shrinkWrap:
+                                    true, // Important for proper scrolling
+                                itemCount: _listaEmpleadosSeleccionados.length,
+                                itemBuilder: (context, index) {
+                                  final item =
+                                      _listaEmpleadosSeleccionados[index];
+                                  return ListTile(
+                                    title: Text(item['nombre']),
+                                  );
+                                },
+                              ),
+                            )
+                          : const Center(child: Text('No items')),
+                    ),
                   ),
                   ElevatedButton(
                     child: const Text('Agregar Trabajo'),
@@ -178,6 +210,5 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
 
   void refreshNotifier(dynamic objTrabajador) {
     selectedTrabajador = objTrabajador;
-    _notifier.value = !_notifier.value;
   }
 }
