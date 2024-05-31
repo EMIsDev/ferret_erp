@@ -36,9 +36,35 @@ class _EditarEmpleadoState extends State<EditarEmpleado> {
                       valueListenable: _notifier,
                       builder: (context, value, child) {
                         if (selectedTrabajador.isNotEmpty) {
-                          return EmpleadoForm(
-                              idTrabajador: selectedTrabajador,
-                              refreshNotifier: refreshDropDown);
+                          return FutureBuilder(
+                            future: empleadosController.getEmpleadoById(
+                                empleadoId: selectedTrabajador),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                if (snapshot.data == null) {
+                                  return const Text('No hay datos');
+                                }
+                                final empleado =
+                                    snapshot.data as Map<String, dynamic>;
+                                empleado.addEntries([
+                                  MapEntry('id', selectedTrabajador),
+                                ]);
+                                return SingleChildScrollView(
+                                  child: EmpleadoForm(
+                                      refreshNotifier: refreshDropDown,
+                                      empleado: empleado),
+                                );
+                              } else {
+                                return const SizedBox(
+                                  height: 200,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                            },
+                          );
                         } else {
                           return const SizedBox();
                         }

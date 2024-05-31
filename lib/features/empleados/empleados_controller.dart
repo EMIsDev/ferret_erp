@@ -74,11 +74,13 @@ class EmpleadosController {
     }
   }
 
-  Future<void> addEmpleado(Map<String, dynamic> empleado) async {
+  Future<bool> addEmpleado(Map<String, dynamic> empleado) async {
     try {
       await _firestore.collection('empleados').add(empleado);
+      return true;
     } catch (e) {
       print('Error adding empleado: $e');
+      return false;
     }
   }
 

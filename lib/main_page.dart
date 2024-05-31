@@ -95,19 +95,10 @@ class _MainPageState extends State<MainPage> {
                   _updateTitle('Agregar Empleado');
 
                   sideMenuController.changePage(index);
-                  Modular.to.navigate('/empleados/agregarEmpeado/');
+                  Modular.to.navigate('/empleados/agregarEmpleado/');
                 },
                 icon: const Icon(Icons.watch),
               ),
-              SideMenuItem(
-                title: 'Eliminar Empleado',
-                onTap: (index, _) {
-                  _updateTitle('Eliminar Empleado');
-
-                  sideMenuController.changePage(index);
-                },
-                icon: const Icon(Icons.delete),
-              )
             ],
           )
         ],
