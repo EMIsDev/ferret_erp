@@ -1,6 +1,6 @@
+import 'package:ferret_erp/features/empleados/components/edit_delete_empleado_buttons.dart';
 import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 class EmpleadoForm extends StatefulWidget {
   final String idTrabajador;
@@ -34,15 +34,6 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
           () => e.value?.text.isNotEmpty ? e.value.text : empleado[e.key]);
     }
     return res;
-  }
-
-  Future<bool> _updateEmpleado(formData) async {
-    return await empleadosController.updateEmpleado(
-        idTrabajador: widget.idTrabajador, updatedData: formData);
-  }
-
-  Future<bool> _deleteEmpleado(idTrabajado) async {
-    return await empleadosController.deleteEmpleado(idTrabajado);
   }
 
   void _populateFormFields() {
@@ -144,108 +135,13 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
                                   labelText: 'telefono',
                                 ),
                               )),
-                          ButtonBar(
-                              alignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (_formularioEstado.currentState!
-                                        .validate()) {
-                                      _formularioEstado.currentState!.save();
-                                      final formData = getFormData();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text('Procesando')),
-                                      );
-
-                                      _updateEmpleado(formData).then((value) {
-                                        if (value) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content:
-                                                  const Text('Actualizado'),
-                                              backgroundColor: Colors.green,
-                                              onVisible: () {
-                                                widget.refreshNotifier(
-                                                    idTrabajador:
-                                                        widget.idTrabajador);
-                                              },
-                                            ),
-                                          );
-                                        } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Error'),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                        }
-                                      });
-                                    }
-                                  },
-                                  child: const Text('Actualizar'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) => AlertDialog(
-                                              title: const Text('ATENCIÓN!'),
-                                              content: const Text(
-                                                  'Seguro que quieres eliminar al trabajador?'),
-                                              actions: [
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      Modular.to.pop();
-                                                    },
-                                                    child: const Text('No')),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    Modular.to.pop();
-                                                    _deleteEmpleado(
-                                                            widget.idTrabajador)
-                                                        .then((value) {
-                                                      if (value) {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: const Text(
-                                                                'Eliminado'),
-                                                            backgroundColor:
-                                                                Colors.green,
-                                                            onVisible: () {
-                                                              widget
-                                                                  .refreshNotifier();
-                                                            },
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          const SnackBar(
-                                                            content:
-                                                                Text('Error'),
-                                                            backgroundColor:
-                                                                Colors.red,
-                                                          ),
-                                                        );
-                                                      }
-                                                    });
-                                                  },
-                                                  child: const Text('Si'),
-                                                ),
-                                              ],
-                                            ),
-                                        barrierDismissible: true);
-                                  },
-                                  child: const Text('Eliminar'),
-                                ),
-                              ]),
+                          EditDeleteEmpleadoButtonBar(
+                              idTrabajador: widget.idTrabajador,
+                              formularioEstado: _formularioEstado,
+                              refreshNotifier: widget.refreshNotifier,
+                              trabajadorFormController:
+                                  trabajadorFormController,
+                              empleado: empleado)
                         ],
                       )),
                 );

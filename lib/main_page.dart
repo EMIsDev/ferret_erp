@@ -90,12 +90,12 @@ class _MainPageState extends State<MainPage> {
                 icon: const Icon(Icons.edit),
               ),
               SideMenuItem(
-                title: 'Conteo Horas',
+                title: 'Agregar Empleado',
                 onTap: (index, _) {
-                  _updateTitle('Conteo Horas');
+                  _updateTitle('Agregar Empleado');
 
                   sideMenuController.changePage(index);
-                  Modular.to.navigate('/empleados/tablaTrabajos/');
+                  Modular.to.navigate('/empleados/agregarEmpeado/');
                 },
                 icon: const Icon(Icons.watch),
               ),
