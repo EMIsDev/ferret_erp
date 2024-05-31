@@ -30,14 +30,15 @@ class _EditarEmpleadoState extends State<EditarEmpleado> {
                 children: [
                   EmpleadoDropdownSelector(
                       listaEmpleados: listaEmpleados,
-                      refreshNotifier: refreshNotifier),
+                      refreshNotifier: refreshNotifier,
+                      selectedTrabajador: selectedTrabajador),
                   ValueListenableBuilder(
                       valueListenable: _notifier,
                       builder: (context, value, child) {
                         if (selectedTrabajador.isNotEmpty) {
                           return EmpleadoForm(
-                              trabajador: selectedTrabajador,
-                              refreshNotifier: refreshNotifier);
+                              idTrabajador: selectedTrabajador,
+                              refreshNotifier: refreshDropDown);
                         } else {
                           return const SizedBox();
                         }
@@ -61,6 +62,12 @@ class _EditarEmpleadoState extends State<EditarEmpleado> {
   void refreshNotifier(dynamic idTrabajador) {
     selectedTrabajador = idTrabajador['id'];
     _notifier.value = !_notifier.value;
+  }
+
+  void refreshDropDown({String idTrabajador = ''}) {
+    setState(() {
+      selectedTrabajador = idTrabajador;
+    });
   }
 
   @override

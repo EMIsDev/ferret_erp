@@ -82,12 +82,14 @@ class EmpleadosController {
     }
   }
 
-  Future<bool> updateEmpleado(Map<String, dynamic> updatedData) async {
+  Future<bool> updateEmpleado(
+      {required String idTrabajador,
+      required Map<String, dynamic> updatedData}) async {
     try {
       await _firestore
           .collection('empleados')
-          .doc(updatedData['id'])
-          .update(updatedData);
+          .doc(idTrabajador)
+          .update(updatedData); // elimino id para no repetir en la bd
       return true; // Update successful
     } catch (e) {
       print('Error updating empleado: $e');
@@ -95,17 +97,16 @@ class EmpleadosController {
     }
   }
 
-  Future<void> deleteEmpleado(String empleadoId) async {
+  Future<bool> deleteEmpleado(String empleadoId) async {
     try {
       await _firestore.collection('empleados').doc(empleadoId).delete();
+      return true; // Delete successful
     } catch (e) {
       print('Error deleting empleado: $e');
+      return false; // Delete failed
     }
   }
 
-  // la funcion se llama addWorkToEmployee esta recibira una lista de empleados que hayan hecho el trabajo y el trabajo que se realizo,
-  // este trabajo tiene descripcion, fecha inicio, fecha final, hora inicio, hora final, con esto quiero calcular el total de horas trabajadas
-  // y finalmente almacenar este trabajo con las horas totales y asignar este trabajo a los empleados que lo realizaron
   Future<void> addWorkToEmployee(
       {required List<Map<String, dynamic>> empleados,
       required Map<String, dynamic> trabajo}) async {

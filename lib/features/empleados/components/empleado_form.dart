@@ -1,13 +1,14 @@
 import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class EmpleadoForm extends StatefulWidget {
-  final String trabajador;
-  final Function(dynamic) refreshNotifier;
+  final String idTrabajador;
+  final Function({String idTrabajador}) refreshNotifier;
 
   const EmpleadoForm({
     super.key,
-    required this.trabajador,
+    required this.idTrabajador,
     required this.refreshNotifier,
   });
 
@@ -32,12 +33,16 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
       res.putIfAbsent(e.key,
           () => e.value?.text.isNotEmpty ? e.value.text : empleado[e.key]);
     }
-    res['id'] = widget.trabajador;
     return res;
   }
 
   Future<bool> _updateEmpleado(formData) async {
-    return await empleadosController.updateEmpleado(formData);
+    return await empleadosController.updateEmpleado(
+        idTrabajador: widget.idTrabajador, updatedData: formData);
+  }
+
+  Future<bool> _deleteEmpleado(idTrabajado) async {
+    return await empleadosController.deleteEmpleado(idTrabajado);
   }
 
   void _populateFormFields() {
@@ -48,13 +53,13 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.trabajador.isEmpty) {
+    switch (widget.idTrabajador.isEmpty) {
       case true:
         return const Text('No hay datos');
       case false:
         return FutureBuilder(
             future: empleadosController.getEmpleadoById(
-                empleadoId: widget.trabajador),
+                empleadoId: widget.idTrabajador),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.data == null) return const Text('No hay datos');
@@ -139,86 +144,108 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
                                   labelText: 'telefono',
                                 ),
                               )),
-                          Row(children: [
-                            SizedBox(
-                              //width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (_formularioEstado.currentState!
-                                      .validate()) {
-                                    _formularioEstado.currentState!.save();
-                                    final formData = getFormData();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Procesando')),
-                                    );
-                                    _updateEmpleado(formData).then((value) {
-                                      if (value) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: const Text('Actualizado'),
-                                            backgroundColor: Colors.green,
-                                            onVisible: () {
-                                              widget.refreshNotifier(formData);
-                                            },
-                                          ),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Error'),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      }
-                                    });
-                                  }
-                                },
-                                child: const Text('Actualizar'),
-                              ),
-                            ),
-                            SizedBox(
-                              //width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (_formularioEstado.currentState!
-                                      .validate()) {
-                                    _formularioEstado.currentState!.save();
-                                    final formData = getFormData();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Procesando')),
-                                    );
-                                    _updateEmpleado(formData).then((value) {
-                                      if (value) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text('Actualizado'),
-                                            backgroundColor: Colors.green,
-                                            onVisible: () {
-                                              widget.refreshNotifier(formData);
-                                            },
-                                          ),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Error'),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      }
-                                    });
-                                  }
-                                },
-                                child: const Text('Eliminar'),
-                              ),
-                            ),
-                          ])
+                          ButtonBar(
+                              alignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (_formularioEstado.currentState!
+                                        .validate()) {
+                                      _formularioEstado.currentState!.save();
+                                      final formData = getFormData();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text('Procesando')),
+                                      );
+
+                                      _updateEmpleado(formData).then((value) {
+                                        if (value) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content:
+                                                  const Text('Actualizado'),
+                                              backgroundColor: Colors.green,
+                                              onVisible: () {
+                                                widget.refreshNotifier(
+                                                    idTrabajador:
+                                                        widget.idTrabajador);
+                                              },
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Error'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      });
+                                    }
+                                  },
+                                  child: const Text('Actualizar'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                              title: const Text('ATENCIÓN!'),
+                                              content: const Text(
+                                                  'Seguro que quieres eliminar al trabajador?'),
+                                              actions: [
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Modular.to.pop();
+                                                    },
+                                                    child: const Text('No')),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Modular.to.pop();
+                                                    _deleteEmpleado(
+                                                            widget.idTrabajador)
+                                                        .then((value) {
+                                                      if (value) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                            content: const Text(
+                                                                'Eliminado'),
+                                                            backgroundColor:
+                                                                Colors.green,
+                                                            onVisible: () {
+                                                              widget
+                                                                  .refreshNotifier();
+                                                            },
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                            content:
+                                                                Text('Error'),
+                                                            backgroundColor:
+                                                                Colors.red,
+                                                          ),
+                                                        );
+                                                      }
+                                                    });
+                                                  },
+                                                  child: const Text('Si'),
+                                                ),
+                                              ],
+                                            ),
+                                        barrierDismissible: true);
+                                  },
+                                  child: const Text('Eliminar'),
+                                ),
+                              ]),
                         ],
                       )),
                 );
@@ -232,23 +259,5 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
               }
             });
     }
-  }
-
-  Widget _buildEmpleadoInfoCard({required Map<String, dynamic> empleado}) {
-    return Card(
-      child: SizedBox(
-        height: 100,
-        child: Center(
-          child: ListTile(
-            leading:
-                IconButton(onPressed: () {}, icon: const Icon(Icons.person)),
-            title: Text('${empleado['nombre']}'),
-            subtitle: Text('${empleado['apellido']}'),
-            trailing:
-                OutlinedButton(onPressed: () {}, child: const Icon(Icons.edit)),
-          ),
-        ),
-      ),
-    );
   }
 }
