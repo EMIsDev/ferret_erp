@@ -19,10 +19,10 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
   DateTime _horaInicio = DateTime.now(); // Initial time for work start
   DateTime _horaFinal =
       DateTime.now(); // Initial time for work endtial end date
-  ValueNotifier<bool> _notifier = ValueNotifier(false);
+  final ValueNotifier<bool> _notifier = ValueNotifier(false);
   Map<String, dynamic> selectedTrabajador = {};
   List<Map<String, dynamic>> _listaEmpleados = [];
-  List<Map<String, dynamic>> _listaEmpleadosSeleccionados = [];
+  final List<Map<String, dynamic>> _listaEmpleadosSeleccionados = [];
 
   @override
   Widget build(BuildContext context) {

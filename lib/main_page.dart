@@ -100,6 +100,30 @@ class _MainPageState extends State<MainPage> {
                 icon: const Icon(Icons.watch),
               ),
             ],
+          ),
+          SideMenuExpansionItem(
+            title: "Inventario",
+            icon: const Icon(Icons.inventory),
+            children: [
+              SideMenuItem(
+                title: 'Lista Item',
+                onTap: (index, _) {
+                  sideMenuController.changePage(index);
+                  _updateTitle('Lista Item');
+                  Modular.to.navigate('/inventario/listaItems/');
+                },
+                icon: const Icon(Icons.list),
+              ),
+              SideMenuItem(
+                title: 'Agregar Items',
+                onTap: (index, _) {
+                  sideMenuController.changePage(index);
+                  _updateTitle('Agregar Items');
+                  Modular.to.navigate('/inventario/agregarItem/');
+                },
+                icon: const Icon(Icons.add),
+              ),
+            ],
           )
         ],
         controller: sideMenuController);
