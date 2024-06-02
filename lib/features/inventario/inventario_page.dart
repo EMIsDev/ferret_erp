@@ -6,6 +6,6 @@ class ContabilidadPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RouterOutlet();
+    return const Expanded(child: RouterOutlet());
   }
 }

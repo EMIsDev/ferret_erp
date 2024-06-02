@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:ferret_erp/features/inventario/components/edit_delete_item_buttons.dart';
 import 'package:ferret_erp/features/inventario/inventario_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ItemForm extends StatefulWidget {
@@ -48,11 +50,9 @@ class _ItemFormState extends State<ItemForm> {
   }
 
   void _populateFormFields({required Map<String, dynamic> item}) {
-    print('entro');
     for (MapEntry e in itemFormController.entries) {
       itemFormController[e.key]!.text = item[e.key].toString();
     }
-    print(itemFormController['foto']!.text);
   }
 
   @override
@@ -65,10 +65,13 @@ class _ItemFormState extends State<ItemForm> {
               if (snapshot.connectionState == ConnectionState.done) {
                 final Map<String, dynamic> item = snapshot.data!;
                 _populateFormFields(item: item);
-                return SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Form(
-                      key: _formularioEstado,
+                return Form(
+                  key: _formularioEstado,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height - 100,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      scrollDirection: Axis.vertical,
                       child: Column(
                         children: [
                           ValueListenableBuilder(
@@ -109,9 +112,6 @@ class _ItemFormState extends State<ItemForm> {
                               );
                             },
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
                           Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
@@ -133,9 +133,6 @@ class _ItemFormState extends State<ItemForm> {
                                   labelText: 'Nombre',
                                 ),
                               )),
-                          const SizedBox(
-                            height: 10,
-                          ),
                           Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
@@ -158,28 +155,23 @@ class _ItemFormState extends State<ItemForm> {
                                   labelText: 'cantidad',
                                 ),
                               )),
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          /*Modular.to.path.toString().contains('editarEmpleado')
+                          Modular.to.path.toString().contains('editarItem')
                               ? //enseñar botones con logica para actualizar o eliminar empleado
-                              EditDeleteEmpleadoButtonBar(
-                                  idTrabajador: widget.empleado['id'],
+                              EditDeleteItemButtonBar(
+                                  idItem: widget.idItem,
                                   formularioEstado: _formularioEstado,
-                                  refreshNotifier: widget.refreshNotifier,
-                                  trabajadorFormController:
-                                      itemFormController,
-                                  empleado: widget.empleado)
-                              : NewEmpleadoButton(
-                                  formularioEstado: _formularioEstado,
-                                  refreshNotifier: widget.refreshNotifier,
-                                  trabajadorFormController:
-                                      itemFormController,
-                                  empleado: widget.empleado)
-                        */
+                                  itemFormController: itemFormController,
+                                )
+                              : const Placeholder() /*NewEmpleadoButton(
+                                                formularioEstado: _formularioEstado,
+                                                refreshNotifier: widget.refreshNotifier,
+                                                trabajadorFormController:
+                                                    itemFormController,
+                                                empleado: widget.empleado)*/
                         ],
-                      )),
+                      ),
+                    ),
+                  ),
                 );
               } else {
                 return SizedBox(

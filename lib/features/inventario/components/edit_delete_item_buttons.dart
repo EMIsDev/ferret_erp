@@ -2,33 +2,30 @@ import 'package:ferret_erp/features/empleados/empleados_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class EditDeleteEmpleadoButtonBar extends StatelessWidget {
-  final String idTrabajador;
+class EditDeleteItemButtonBar extends StatelessWidget {
+  final String idItem;
   final GlobalKey<FormState> formularioEstado;
-  final Map<String, TextEditingController> trabajadorFormController;
-  final Function({String idTrabajador}) refreshNotifier;
-  final Map<String, dynamic> empleado;
+  final Map<String, TextEditingController> itemFormController;
 
-  const EditDeleteEmpleadoButtonBar(
-      {super.key,
-      required this.idTrabajador,
-      required this.formularioEstado,
-      required this.refreshNotifier,
-      required this.trabajadorFormController,
-      required this.empleado});
+  const EditDeleteItemButtonBar({
+    super.key,
+    required this.idItem,
+    required this.formularioEstado,
+    required this.itemFormController,
+  });
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
 
-    for (MapEntry e in trabajadorFormController.entries) {
-      res.putIfAbsent(e.key,
-          () => e.value?.text.isNotEmpty ? e.value.text : empleado[e.key]);
+    for (MapEntry e in itemFormController.entries) {
+      res.putIfAbsent(
+          e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
     }
     return res;
   }
 
   Future<bool> _updateEmpleado(formData) async {
     return await empleadosController.updateEmpleado(
-        idTrabajador: idTrabajador, updatedData: formData);
+        idTrabajador: idItem, updatedData: formData);
   }
 
   Future<bool> _deleteEmpleado(idTrabajado) async {
@@ -55,7 +52,7 @@ class EditDeleteEmpleadoButtonBar extends StatelessWidget {
                     content: const Text('Actualizado'),
                     backgroundColor: Colors.green,
                     onVisible: () {
-                      refreshNotifier(idTrabajador: idTrabajador);
+                      Modular.to.pop();
                     },
                   ),
                 );
@@ -89,14 +86,14 @@ class EditDeleteEmpleadoButtonBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           Modular.to.pop();
-                          _deleteEmpleado(idTrabajador).then((value) {
+                          _deleteEmpleado(idItem).then((value) {
                             if (value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text('Eliminado'),
                                   backgroundColor: Colors.green,
                                   onVisible: () {
-                                    refreshNotifier();
+                                    //  refreshNotifier();
                                   },
                                 ),
                               );
