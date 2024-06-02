@@ -34,7 +34,6 @@ class ItemsController {
         };
       }).toList();
       items.add({'docRef': querySnapshot.docs.last});
-      print(items);
       return items;
     } catch (e) {
       print('Error retrieving items: $e');

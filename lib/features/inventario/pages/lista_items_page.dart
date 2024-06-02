@@ -43,6 +43,7 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
   }
 
   Future<void> _loadItems({required Map<String, dynamic> filters}) async {
+    print('Loading items...');
     setState(() {
       _isLoading = true;
     });
@@ -51,10 +52,12 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
     final List<Map<String, dynamic>> items =
         await itemsController.getItems(filters: filters);
     setState(() {
-      _items.addAll(items);
       if (items.isNotEmpty) {
-        _lastDocument = items.last['docRef'];
+        _lastDocument = items.last['docRef'] as DocumentSnapshot;
+        items.removeLast(); // eliminar ultimo elemento que es docRef
       }
+      _items.addAll(items);
+
       _isLoading = false;
     });
   }
