@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ferret_erp/features/inventario/inventario_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,6 +19,8 @@ class ItemForm extends StatefulWidget {
 class _ItemFormState extends State<ItemForm> {
   final itemController = ItemsController();
   final GlobalKey<FormState> _formularioEstado = GlobalKey<FormState>();
+  String newSelectedImage = '';
+  ValueNotifier<bool> _notifier = ValueNotifier(false);
 
   final Map<String, TextEditingController> itemFormController = {
     'nombre': TextEditingController(),
@@ -27,7 +31,10 @@ class _ItemFormState extends State<ItemForm> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      itemFormController['foto']!.text = image.path;
+      newSelectedImage = image.path;
+
+      _notifier.value =
+          !_notifier.value; //notificar para recargar solo widget de foto
     }
   }
 
@@ -41,9 +48,11 @@ class _ItemFormState extends State<ItemForm> {
   }
 
   void _populateFormFields({required Map<String, dynamic> item}) {
+    print('entro');
     for (MapEntry e in itemFormController.entries) {
       itemFormController[e.key]!.text = item[e.key].toString();
     }
+    print(itemFormController['foto']!.text);
   }
 
   @override
@@ -56,38 +65,49 @@ class _ItemFormState extends State<ItemForm> {
               if (snapshot.connectionState == ConnectionState.done) {
                 final Map<String, dynamic> item = snapshot.data!;
                 _populateFormFields(item: item);
-
                 return SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Form(
                       key: _formularioEstado,
                       child: Column(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey)),
-                            child: Stack(
-                              alignment: AlignmentDirectional.bottomEnd,
-                              children: [
-                                item['foto'] != null
-                                    ? Image.network(item['foto'])
-                                    : Image.asset('assets/images/no-image.png'),
-                                IconButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.amberAccent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      )),
-                                  icon: const Icon(Icons.edit,
-                                      color: Colors.grey),
-                                  onPressed: () async {
-                                    await _selectImage();
-                                  },
+                          ValueListenableBuilder(
+                            valueListenable: _notifier,
+                            builder: (context, value, child) {
+                              itemFormController['foto']!.text =
+                                  newSelectedImage;
+                              return Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.grey)),
+                                child: Stack(
+                                  alignment: AlignmentDirectional.bottomEnd,
+                                  children: [
+                                    newSelectedImage.isNotEmpty
+                                        ? Image.file(File(newSelectedImage))
+                                        : item['foto'] != null
+                                            ? Image.network(item['foto'])
+                                            : Image.asset(
+                                                'assets/images/no-image.png'),
+                                    IconButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.amberAccent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          )),
+                                      icon: const Icon(Icons.edit,
+                                          color: Colors.grey),
+                                      onPressed: () async {
+                                        await _selectImage();
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                           const SizedBox(
                             height: 10,
