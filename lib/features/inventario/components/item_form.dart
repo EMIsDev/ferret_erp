@@ -74,8 +74,11 @@ class _ItemFormState extends State<ItemForm> {
                           ValueListenableBuilder(
                             valueListenable: _notifier,
                             builder: (context, value, child) {
-                              itemFormController['foto']!.text =
-                                  newSelectedImage;
+                              if (newSelectedImage.isNotEmpty) {
+                                itemFormController['foto']!.text =
+                                    newSelectedImage;
+                              }
+
                               return Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 10),

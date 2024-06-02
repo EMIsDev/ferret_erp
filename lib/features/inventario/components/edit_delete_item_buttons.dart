@@ -1,4 +1,4 @@
-import 'package:ferret_erp/features/empleados/empleados_page.dart';
+import 'package:ferret_erp/features/inventario/pages/editar_item_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -20,16 +20,17 @@ class EditDeleteItemButtonBar extends StatelessWidget {
       res.putIfAbsent(
           e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
     }
+    print(res);
     return res;
   }
 
-  Future<bool> _updateEmpleado(formData) async {
-    return await empleadosController.updateEmpleado(
-        idTrabajador: idItem, updatedData: formData);
+  Future<bool> _updateItem(formData) async {
+    return await itemsController.updateItem(
+        idItem: idItem, updatedData: formData);
   }
 
   Future<bool> _deleteEmpleado(idTrabajado) async {
-    return await empleadosController.deleteEmpleado(idTrabajado);
+    return await Future.delayed(const Duration(seconds: 1), () => true);
   }
 
   @override
@@ -45,14 +46,15 @@ class EditDeleteItemButtonBar extends StatelessWidget {
               const SnackBar(content: Text('Procesando')),
             );
 
-            _updateEmpleado(formData).then((value) {
+            _updateItem(formData).then((value) {
               if (value) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Actualizado'),
                     backgroundColor: Colors.green,
                     onVisible: () {
-                      Modular.to.pop();
+                      /*  Modular.to.navigate(
+                          Modular.to.navigateHistory.last.uri.toString());*/
                     },
                   ),
                 );
@@ -80,7 +82,7 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                     actions: [
                       ElevatedButton(
                           onPressed: () {
-                            Modular.to.pop();
+                            print(Modular.to.navigateHistory);
                           },
                           child: const Text('No')),
                       ElevatedButton(

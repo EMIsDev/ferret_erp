@@ -53,6 +53,21 @@ class ItemsController {
     }
   }
 
+  Future<bool> updateItem(
+      {required String idItem,
+      required Map<String, dynamic> updatedData}) async {
+    try {
+      await _firestore
+          .collection('empleados')
+          .doc(idItem)
+          .update(updatedData); // elimino id para no repetir en la bd
+      return true; // Update successful
+    } catch (e) {
+      print('Error updating empleado: $e');
+      return false; // Update failed
+    }
+  }
+
   Future<void> putMockData() async {
     try {
       final data = await rootBundle.loadString('assets/MOCK_DATA_items.json');
