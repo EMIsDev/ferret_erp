@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../inventario_controller.dart';
 
@@ -134,7 +135,9 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
-                                  // Navigate to edit item page
+                                  Modular.to.navigate(
+                                    '/inventario/editarItem/${item['id']}',
+                                  );
                                 },
                               ),
                               IconButton(

@@ -31,6 +31,7 @@ class ItemsController {
       List<Map<String, dynamic>> items = querySnapshot.docs.map((doc) {
         return {
           ...doc.data() as Map<String, dynamic>,
+          'id': doc.id,
         };
       }).toList();
       items.add({'docRef': querySnapshot.docs.last});
@@ -38,6 +39,17 @@ class ItemsController {
     } catch (e) {
       print('Error retrieving items: $e');
       return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> getItemById({required String itemId}) async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection('items').doc(itemId).get();
+      return documentSnapshot.data() as Map<String, dynamic>;
+    } catch (e) {
+      print('Error getting item by id: $e');
+      return {};
     }
   }
 
