@@ -14,7 +14,7 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
   final itemsController = ItemsController();
   final Map<String, dynamic> filters = {
     'search': '',
-    'limit': 20,
+    'limit': 15,
   };
   bool _isLoading = false;
 
@@ -68,7 +68,7 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                     ),
                     onSubmitted: (value) {
                       setState(() {
-                        filters['search'] = value;
+                        filters['search'] = value.toLowerCase();
                         _items.clear();
                         _loadItems(filters: filters);
                       });
@@ -78,7 +78,8 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
               ],
             ),
             Expanded(
-              child: ListView.builder(
+              child: ListView.separated(
+                separatorBuilder: (context, index) => const Divider(),
                 controller: _scrollController,
                 itemCount: _items.length + (_isLoading ? 1 : 0),
                 itemBuilder: (context, index) {
@@ -89,28 +90,50 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                   }
                   var item = _items[index];
                   return SizedBox(
-                    height: 150, // Altura deseada para la tarjeta
-                    child: Card(
-                      child: Center(
-                        child: ListTile(
-                          leading: Image.network(
-                            item['foto'],
-                            fit: BoxFit.cover,
+                    height: 150, // Desired height for the card
+                    child: Center(
+                      child: ListTile(
+                          contentPadding:
+                              const EdgeInsets.all(10), // Add padding
+                          leading: SizedBox(
+                            width: 50, // Set a fixed width for the image
+                            height: 50, // Set a fixed height for the image
+                            child: item['foto'] != null
+                                ? Image.network(
+                                    item['foto'],
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.error);
+                                    },
+                                  )
+                                : Image.asset('assets/no-image.webp',
+                                    fit: BoxFit.cover),
                           ),
                           title: Text(
                             item['nombre'].toString().toUpperCase(),
-                            style: const TextStyle(
-                                fontSize:
-                                    18), // Tamaño de fuente para el título
+                            style: const TextStyle(fontSize: 18),
                           ),
                           subtitle: Text(
-                            item['cantidad'].toString(),
-                            style: const TextStyle(
-                                fontSize:
-                                    16), // Tamaño de fuente para el subtítulo
+                            'Cantidad: ${item['cantidad']}',
+                            style: const TextStyle(fontSize: 16),
                           ),
-                        ),
-                      ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  // Navigate to edit item page
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  // Delete item
+                                },
+                              ),
+                            ],
+                          )),
                     ),
                   );
                 },
