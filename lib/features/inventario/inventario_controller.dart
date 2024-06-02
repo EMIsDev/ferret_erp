@@ -8,12 +8,18 @@ class ItemsController {
   Future<List<Map<String, dynamic>>> getItems(
       {Map<String, dynamic> filters = const {
         'limit': 20,
-        'search': ''
+        'search': '',
+        'lastDocument': null
       }}) async {
     try {
       String search = filters['search'] ?? '';
       int limit = filters['limit'] ?? 20;
+      DocumentSnapshot? lastDocument = filters['lastDocument'];
+
       Query query = _firestore.collection('items').limit(limit);
+      if (lastDocument != null) {
+        query = query.startAfterDocument(lastDocument);
+      }
       if (search.isNotEmpty) {
         query = query
             .where('searchField', isGreaterThanOrEqualTo: search)
@@ -22,10 +28,13 @@ class ItemsController {
 
       QuerySnapshot querySnapshot = await query.get();
 
-      List<Map<String, dynamic>> items = querySnapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
-
+      List<Map<String, dynamic>> items = querySnapshot.docs.map((doc) {
+        return {
+          ...doc.data() as Map<String, dynamic>,
+        };
+      }).toList();
+      items.add({'docRef': querySnapshot.docs.last});
+      print(items);
       return items;
     } catch (e) {
       print('Error retrieving items: $e');

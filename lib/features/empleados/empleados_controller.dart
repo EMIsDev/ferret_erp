@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class EmpleadosController {
@@ -11,6 +14,7 @@ class EmpleadosController {
           await _firestore.collection('empleados').get();
       List<Object?> empleados =
           querySnapshot.docs.map((doc) => doc.data()).toList();
+
       return empleados;
     } catch (e) {
       print('Error getting empleados: $e');
@@ -67,6 +71,7 @@ class EmpleadosController {
       List<Map<String, dynamic>> empleados = querySnapshot.docs
           .map((doc) => {'id': doc.id, 'nombre': doc['nombre']})
           .toList();
+
       return empleados;
     } catch (e) {
       print('Error getting empleados: $e');
@@ -148,6 +153,41 @@ class EmpleadosController {
       }
     } catch (e) {
       print('Error adding work to employee: $e');
+    }
+  }
+
+  Future<void> putMockData() async {
+    try {
+      final data =
+          await rootBundle.loadString('assets/MOCK_DATA_empleados.json');
+      final List<dynamic> itemsList = jsonDecode(data);
+      final List<Map<String, dynamic>> items =
+          itemsList.cast<Map<String, dynamic>>();
+
+      for (var item in items) {
+        // Asigna un ID generado automáticamente
+        await _firestore.collection('empleados').add(item);
+      }
+    } catch (e) {
+      print('Error putting mock data: $e');
+    }
+  }
+
+  Future<void> insensitiveCase() async {
+    try {
+      Query query = _firestore.collection('empleados');
+
+      QuerySnapshot items = await query.get();
+
+      for (var item in items.docs) {
+        // Asigna un ID generado automáticamente
+        await _firestore
+            .collection('empleados')
+            .doc(item.id)
+            .update({'searchField': item['nombre'].toString().toLowerCase()});
+      }
+    } catch (e) {
+      print('Error putting mock data: $e');
     }
   }
 }

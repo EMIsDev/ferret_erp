@@ -64,6 +64,7 @@ dev_dependencies:
 flutter:
   assets:
      - assets/MOCK_DATA_items.json
+     - assets/MOCK_DATA_empleados.json
      - assets/no-image.webp
 
   #   - images/a_dot_ham.jpeg

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../inventario_controller.dart';
@@ -15,8 +16,10 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
   final Map<String, dynamic> filters = {
     'search': '',
     'limit': 15,
+    'lastDocument': null,
   };
   bool _isLoading = false;
+  DocumentSnapshot? _lastDocument;
 
   @override
   void initState() {
@@ -43,11 +46,15 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
     setState(() {
       _isLoading = true;
     });
+    filters['lastDocument'] = _lastDocument;
 
     final List<Map<String, dynamic>> items =
         await itemsController.getItems(filters: filters);
     setState(() {
       _items.addAll(items);
+      if (items.isNotEmpty) {
+        _lastDocument = items.last['docRef'];
+      }
       _isLoading = false;
     });
   }
@@ -70,6 +77,7 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                       setState(() {
                         filters['search'] = value.toLowerCase();
                         _items.clear();
+                        _lastDocument = null; //reset pagination
                         _loadItems(filters: filters);
                       });
                     },
