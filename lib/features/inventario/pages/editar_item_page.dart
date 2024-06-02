@@ -25,10 +25,9 @@ class _EditarItemState extends State<EditarItem> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               item = snapshot.data!;
-              return SingleChildScrollView(
-                child: ItemForm(
-                  idItem: widget.idItem,
-                ),
+
+              return ItemForm(
+                idItem: widget.idItem,
               );
             } else {
               return SizedBox(

@@ -65,13 +65,10 @@ class _ItemFormState extends State<ItemForm> {
               if (snapshot.connectionState == ConnectionState.done) {
                 final Map<String, dynamic> item = snapshot.data!;
                 _populateFormFields(item: item);
-                return Form(
-                  key: _formularioEstado,
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height - 100,
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(20),
-                      scrollDirection: Axis.vertical,
+                return Flexible(
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formularioEstado,
                       child: Column(
                         children: [
                           ValueListenableBuilder(
@@ -112,6 +109,9 @@ class _ItemFormState extends State<ItemForm> {
                               );
                             },
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
@@ -133,6 +133,9 @@ class _ItemFormState extends State<ItemForm> {
                                   labelText: 'Nombre',
                                 ),
                               )),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
@@ -155,6 +158,9 @@ class _ItemFormState extends State<ItemForm> {
                                   labelText: 'cantidad',
                                 ),
                               )),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Modular.to.path.toString().contains('editarItem')
                               ? //enseñar botones con logica para actualizar o eliminar empleado
                               EditDeleteItemButtonBar(
