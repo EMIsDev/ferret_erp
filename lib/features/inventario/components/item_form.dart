@@ -22,8 +22,8 @@ class _ItemFormState extends State<ItemForm> {
   final itemController = ItemsController();
   final GlobalKey<FormState> _formularioEstado = GlobalKey<FormState>();
   String newSelectedImage = '';
-  ValueNotifier<bool> _notifier = ValueNotifier(false);
 
+  ValueNotifier<bool> _notifier = ValueNotifier(false);
   final Map<String, TextEditingController> itemFormController = {
     'nombre': TextEditingController(),
     'cantidad': TextEditingController(),
@@ -78,7 +78,6 @@ class _ItemFormState extends State<ItemForm> {
                                 itemFormController['foto']!.text =
                                     newSelectedImage;
                               }
-
                               return Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 10),

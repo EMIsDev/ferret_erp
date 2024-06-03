@@ -6,7 +6,6 @@ class EditDeleteItemButtonBar extends StatelessWidget {
   final String idItem;
   final GlobalKey<FormState> formularioEstado;
   final Map<String, TextEditingController> itemFormController;
-
   const EditDeleteItemButtonBar({
     super.key,
     required this.idItem,
@@ -20,13 +19,15 @@ class EditDeleteItemButtonBar extends StatelessWidget {
       res.putIfAbsent(
           e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
     }
-    print(res);
     return res;
   }
 
   Future<bool> _updateItem(formData) async {
     return await itemsController.updateItem(
-        idItem: idItem, updatedData: formData);
+        idItem: idItem,
+        updatedData: formData,
+        photoUpdate: !formData['foto'].toString().contains(
+            'firebasestorage')); // si tiene firestorage significa que tiene la url publica y que tiene esta no se ha actualizado
   }
 
   Future<bool> _deleteEmpleado(idTrabajado) async {
@@ -53,8 +54,9 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                     content: const Text('Actualizado'),
                     backgroundColor: Colors.green,
                     onVisible: () {
-                      /*  Modular.to.navigate(
-                          Modular.to.navigateHistory.last.uri.toString());*/
+                      print('se ha actualizado el item');
+                      Modular.to.navigate(
+                          Modular.to.navigateHistory.last.uri.toString());
                     },
                   ),
                 );

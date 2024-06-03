@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 
 class ItemsController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
   Future<List<Map<String, dynamic>>> getItems(
       {Map<String, dynamic> filters = const {
         'limit': 20,
@@ -55,10 +59,22 @@ class ItemsController {
 
   Future<bool> updateItem(
       {required String idItem,
-      required Map<String, dynamic> updatedData}) async {
+      required Map<String, dynamic> updatedData,
+      required bool photoUpdate}) async {
     try {
+      if (photoUpdate) {
+        final file = File(updatedData['foto']);
+        final String fileName = '$idItem.jpg';
+        final reference = _storage.ref().child('/items/$fileName');
+        final uploadTask = reference.putFile(file);
+        await uploadTask.whenComplete(() => print('Upload complete'));
+
+        updatedData['foto'] = await uploadTask.snapshot.ref.getDownloadURL();
+      }
+      updatedData.addAll(
+          {'searchField': updatedData['nombre'].toString().toLowerCase()});
       await _firestore
-          .collection('empleados')
+          .collection('items')
           .doc(idItem)
           .update(updatedData); // elimino id para no repetir en la bd
       return true; // Update successful
