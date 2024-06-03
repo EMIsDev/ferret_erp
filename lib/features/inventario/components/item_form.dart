@@ -23,18 +23,18 @@ class _ItemFormState extends State<ItemForm> {
   final GlobalKey<FormState> _formularioEstado = GlobalKey<FormState>();
   String newSelectedImage = '';
 
-  ValueNotifier<bool> _notifier = ValueNotifier(false);
-  final Map<String, TextEditingController> itemFormController = {
+  final ValueNotifier<bool> _notifier = ValueNotifier(false);
+  final Map<String, dynamic> itemFormController = {
     'nombre': TextEditingController(),
     'cantidad': TextEditingController(),
-    'foto': TextEditingController()
+    'foto': TextEditingController(),
+    'foto_nueva': '',
   };
   Future<void> _selectImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      newSelectedImage = image.path;
-
+      itemFormController['foto_nueva'] = image.path;
       _notifier.value =
           !_notifier.value; //notificar para recargar solo widget de foto
     }
@@ -43,15 +43,19 @@ class _ItemFormState extends State<ItemForm> {
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
     for (MapEntry e in itemFormController.entries) {
-      res.putIfAbsent(e.key,
-          () => e.value?.text.isNotEmpty ? e.value.text : widget.idItem[e.key]);
+      if (e.value is TextEditingController) {
+        res.putIfAbsent(
+            e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
+      }
     }
     return res;
   }
 
   void _populateFormFields({required Map<String, dynamic> item}) {
     for (MapEntry e in itemFormController.entries) {
-      itemFormController[e.key]!.text = item[e.key].toString();
+      if (e.value is TextEditingController) {
+        itemFormController[e.key]!.text = item[e.key].toString();
+      }
     }
   }
 
@@ -74,10 +78,6 @@ class _ItemFormState extends State<ItemForm> {
                           ValueListenableBuilder(
                             valueListenable: _notifier,
                             builder: (context, value, child) {
-                              if (newSelectedImage.isNotEmpty) {
-                                itemFormController['foto']!.text =
-                                    newSelectedImage;
-                              }
                               return Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 10),
@@ -87,8 +87,9 @@ class _ItemFormState extends State<ItemForm> {
                                 child: Stack(
                                   alignment: AlignmentDirectional.bottomEnd,
                                   children: [
-                                    newSelectedImage.isNotEmpty
-                                        ? Image.file(File(newSelectedImage))
+                                    itemFormController['foto_nueva'].isNotEmpty
+                                        ? Image.file(File(
+                                            itemFormController['foto_nueva']))
                                         : item['foto'] != null
                                             ? Image.network(item['foto'])
                                             : Image.asset(
@@ -169,6 +170,7 @@ class _ItemFormState extends State<ItemForm> {
                                   idItem: widget.idItem,
                                   formularioEstado: _formularioEstado,
                                   itemFormController: itemFormController,
+                                  refreshNotifier: refreshNotifier,
                                 )
                               : const Placeholder() /*NewEmpleadoButton(
                                                 formularioEstado: _formularioEstado,
@@ -193,5 +195,9 @@ class _ItemFormState extends State<ItemForm> {
       case false:
         return const Placeholder();
     }
+  }
+
+  void refreshNotifier() {
+    setState(() {});
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ferret_erp/features/empleados/empleados_module.dart';
 import 'package:ferret_erp/features/inicio/inicio_module.dart';
 import 'package:ferret_erp/features/inventario/inventario_module.dart';
@@ -5,6 +6,7 @@ import 'package:ferret_erp/firebase_options.dart';
 import 'package:ferret_erp/main_page.dart';
 import 'package:ferret_erp/services/global_routes_services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -31,6 +33,8 @@ class MainModule extends Module {
   @override
   void binds(i) {
     i.addSingleton(GlobalRoutesService.new, key: 'ListAllRoutes');
+    i.addInstance(FirebaseFirestore.instance);
+    i.addInstance(FirebaseStorage.instance);
   }
 
   @override

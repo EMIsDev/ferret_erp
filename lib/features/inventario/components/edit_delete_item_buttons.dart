@@ -5,10 +5,13 @@ import 'package:flutter_modular/flutter_modular.dart';
 class EditDeleteItemButtonBar extends StatelessWidget {
   final String idItem;
   final GlobalKey<FormState> formularioEstado;
-  final Map<String, TextEditingController> itemFormController;
+  final Map<String, dynamic> itemFormController;
+  final Function() refreshNotifier;
+
   const EditDeleteItemButtonBar({
     super.key,
     required this.idItem,
+    required this.refreshNotifier,
     required this.formularioEstado,
     required this.itemFormController,
   });
@@ -16,26 +19,32 @@ class EditDeleteItemButtonBar extends StatelessWidget {
     final res = <String, dynamic>{};
 
     for (MapEntry e in itemFormController.entries) {
-      res.putIfAbsent(
-          e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
+      if (e.value is TextEditingController) {
+        res.putIfAbsent(
+            e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
+      } else {
+        res.putIfAbsent(
+            e.key, () => e.value); // guardamos el campo string de foto_nueva
+      }
     }
     return res;
   }
 
   Future<bool> _updateItem(formData) async {
     return await itemsController.updateItem(
-        idItem: idItem,
-        updatedData: formData,
-        photoUpdate: !formData['foto'].toString().contains(
-            'firebasestorage')); // si tiene firestorage significa que tiene la url publica y que tiene esta no se ha actualizado
+      idItem: idItem,
+      updatedData: formData,
+    );
   }
 
-  Future<bool> _deleteEmpleado(idTrabajado) async {
-    return await Future.delayed(const Duration(seconds: 1), () => true);
+  Future<bool> _deleteItem(
+      {required String idItem, required String fotoUrl}) async {
+    return await itemsController.deleteItem(idItem, fotoUrl);
   }
 
   @override
   Widget build(BuildContext context) {
+    print(itemFormController['foto'].text);
     return ButtonBar(alignment: MainAxisAlignment.center, children: [
       ElevatedButton(
         onPressed: () {
@@ -46,7 +55,6 @@ class EditDeleteItemButtonBar extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Procesando')),
             );
-
             _updateItem(formData).then((value) {
               if (value) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -55,8 +63,10 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                     backgroundColor: Colors.green,
                     onVisible: () {
                       print('se ha actualizado el item');
-                      Modular.to.navigate(
-                          Modular.to.navigateHistory.last.uri.toString());
+
+                      refreshNotifier(); //actualizar pagina item
+
+                      //print(Modular.to.navigateHistory.last.uri.toString());
                     },
                   ),
                 );
@@ -84,20 +94,25 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                     actions: [
                       ElevatedButton(
                           onPressed: () {
-                            print(Modular.to.navigateHistory);
+                            Modular.to.pop();
                           },
                           child: const Text('No')),
                       ElevatedButton(
                         onPressed: () {
                           Modular.to.pop();
-                          _deleteEmpleado(idItem).then((value) {
+                          _deleteItem(
+                                  idItem: idItem,
+                                  fotoUrl: itemFormController['foto'].text)
+                              .then((value) {
                             if (value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text('Eliminado'),
                                   backgroundColor: Colors.green,
                                   onVisible: () {
-                                    //  refreshNotifier();
+                                    //Modular.to.pop(); // cambiar toPushNamed para poder hacer pop correctamente, sino se queda todo en negro por el contexto
+                                    Modular.to
+                                        .navigate('/inventario/listaItems/');
                                   },
                                 ),
                               );

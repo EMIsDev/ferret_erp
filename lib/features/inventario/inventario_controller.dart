@@ -47,6 +47,19 @@ class ItemsController {
     }
   }
 
+  Future<bool> deleteItem(String itemId, String fotoUrl) async {
+    try {
+      if (fotoUrl.isNotEmpty) {
+        await _storage.refFromURL(fotoUrl).delete();
+      }
+      await _firestore.collection('items').doc(itemId).delete();
+      return true; // Delete successful
+    } catch (e) {
+      print('Error deleting empleado: $e');
+      return false; // Delete failed
+    }
+  }
+
   Future<Map<String, dynamic>> getItemById({required String itemId}) async {
     try {
       DocumentSnapshot documentSnapshot =
@@ -60,21 +73,25 @@ class ItemsController {
 
   Future<bool> updateItem(
       {required String idItem,
-      required Map<String, dynamic> updatedData,
-      required bool photoUpdate}) async {
+      required Map<String, dynamic> updatedData}) async {
     try {
-      if (photoUpdate) {
-        final file = File(updatedData['foto']);
+      print(updatedData);
+      if (updatedData['foto_nueva'].isNotEmpty) {
+        // eliminamos foto anterior
+        if (updatedData['foto'].toString().isNotEmpty) {
+          await _storage.refFromURL(updatedData['foto']).delete();
+        }
+        //agregamos foto nueva
+        final file = File(updatedData['foto_nueva']);
         final String fileName = '$idItem${p.extension(file.path)}';
         TaskSnapshot taskSnapshot = await _storage.ref('/items/$fileName').putFile(
             file,
             SettableMetadata(
                 contentType:
                     'image/${p.extension(file.path).toString().replaceAll('.', '')}'));
-        updatedData['foto'] = await taskSnapshot.ref
-            .getDownloadURL(); //eliminar la foto anterior, si tiene distinta extension se mantienen en la bd
-        print(updatedData['foto']);
+        updatedData['foto'] = await taskSnapshot.ref.getDownloadURL();
       }
+      updatedData.remove('foto_nueva');
       updatedData.addAll(
           {'searchField': updatedData['nombre'].toString().toLowerCase()});
       await _firestore
@@ -83,7 +100,7 @@ class ItemsController {
           .update(updatedData); // elimino id para no repetir en la bd
       return true; // Update successful
     } catch (e) {
-      print('Error updating empleado: $e');
+      print('Error updating item: $e');
       return false; // Update failed
     }
   }
