@@ -44,7 +44,6 @@ class EditDeleteItemButtonBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(itemFormController['foto'].text);
     return ButtonBar(alignment: MainAxisAlignment.center, children: [
       ElevatedButton(
         onPressed: () {
@@ -89,8 +88,7 @@ class EditDeleteItemButtonBar extends StatelessWidget {
               context: context,
               builder: (_) => AlertDialog(
                     title: const Text('ATENCIÓN!'),
-                    content: const Text(
-                        'Seguro que quieres eliminar al trabajador?'),
+                    content: const Text('Seguro que quieres eliminar al item?'),
                     actions: [
                       ElevatedButton(
                           onPressed: () {
@@ -100,6 +98,7 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           Modular.to.pop();
+                          print(idItem);
                           _deleteItem(
                                   idItem: idItem,
                                   fotoUrl: itemFormController['foto'].text)

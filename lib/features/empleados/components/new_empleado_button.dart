@@ -48,9 +48,9 @@ class NewEmpleadoButton extends StatelessWidget {
                     backgroundColor: Colors.green,
                     onVisible: () {
                       refreshNotifier();
-                      Navigator.of(context).pushReplacementNamed(
-                        '/empleados/',
-                      );
+                      //Navigator.of(context).pushReplacementNamed(
+                      //'/empleados/agregarTrabajo', // agregar ruta a info empleado directamente
+                      //);
                     },
                   ),
                 );

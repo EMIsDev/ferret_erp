@@ -11,9 +11,8 @@ class EditarItem extends StatefulWidget {
 }
 
 Map<String, dynamic> item = {};
-String selectedTrabajador = "";
+String selectedItem = "";
 final itemsController = ItemsController();
-ValueNotifier<bool> _notifier = ValueNotifier(false);
 
 class _EditarItemState extends State<EditarItem> {
   @override
@@ -25,8 +24,8 @@ class _EditarItemState extends State<EditarItem> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               item = snapshot.data!;
-
               return ItemForm(
+                item: item,
                 idItem: widget.idItem,
               );
             } else {
@@ -43,20 +42,16 @@ class _EditarItemState extends State<EditarItem> {
     );
   }
 
-  void refreshNotifier(dynamic idTrabajador) {
-    selectedTrabajador = idTrabajador['id'];
-    _notifier.value = !_notifier.value;
-  }
-
   void refreshDropDown({String idTrabajador = ''}) {
     setState(() {
-      selectedTrabajador = idTrabajador;
+      selectedItem = idTrabajador;
     });
   }
 
   @override
   void dispose() {
-    selectedTrabajador = ""; //reset selectedTrabajador
+    selectedItem = "";
+
     super.dispose();
   }
 }

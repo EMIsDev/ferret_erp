@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
+import 'package:uuid/uuid.dart';
 
 class ItemsController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -39,6 +40,9 @@ class ItemsController {
           'id': doc.id,
         };
       }).toList();
+      if (items.isEmpty) {
+        return List.empty();
+      }
       items.add({'docRef': querySnapshot.docs.last});
       return items;
     } catch (e) {
@@ -50,13 +54,40 @@ class ItemsController {
   Future<bool> deleteItem(String itemId, String fotoUrl) async {
     try {
       if (fotoUrl.isNotEmpty) {
-        await _storage.refFromURL(fotoUrl).delete();
+        try {
+          await _storage.refFromURL(fotoUrl).delete();
+        } catch (e) {
+          print('Error deleting photo: $e');
+          // Continuar aunque haya fallado la eliminación de la foto
+        }
       }
+
       await _firestore.collection('items').doc(itemId).delete();
       return true; // Delete successful
     } catch (e) {
-      print('Error deleting empleado: $e');
+      print('Error deleting item: $e');
       return false; // Delete failed
+    }
+  }
+
+  Future<String> addItem(Map<String, dynamic> item) async {
+    try {
+      var idItemBd = const Uuid().v4(); // generamos id para el item
+
+      print(idItemBd);
+      item['foto'] = await uploadPhoto(
+          File(item['foto']), idItemBd); // subimos nueva foto con id generado
+
+      item.remove('foto_nueva');
+      item.addAll({'searchField': item['nombre'].toString().toLowerCase()});
+      await _firestore
+          .collection('items')
+          .doc(idItemBd)
+          .set(item); // elimino id para no repetir en la bd
+      return idItemBd;
+    } catch (e) {
+      print('Error adding empleado: $e');
+      return '';
     }
   }
 
@@ -71,25 +102,42 @@ class ItemsController {
     }
   }
 
+  Future<String> uploadPhoto(File file, String idItem) async {
+    try {
+      final String fileName = '$idItem${p.extension(file.path)}';
+      TaskSnapshot taskSnapshot = await _storage.ref('/items/$fileName').putFile(
+          file,
+          SettableMetadata(
+              contentType:
+                  'image/${p.extension(file.path).toString().replaceAll('.', '')}'));
+      return taskSnapshot.ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading photo: $e');
+      return '';
+    }
+  }
+
   Future<bool> updateItem(
       {required String idItem,
       required Map<String, dynamic> updatedData}) async {
     try {
-      print(updatedData);
+      print(updatedData['foto']);
+      print(updatedData['foto_nueva']);
+
       if (updatedData['foto_nueva'].isNotEmpty) {
         // eliminamos foto anterior
+
         if (updatedData['foto'].toString().isNotEmpty) {
-          await _storage.refFromURL(updatedData['foto']).delete();
+          try {
+            await _storage.refFromURL(updatedData['foto']).delete();
+          } catch (e) {
+            print('Error deleting photo: $e');
+            // Continuar aunque haya fallado la eliminación de la foto
+          }
         }
-        //agregamos foto nueva
-        final file = File(updatedData['foto_nueva']);
-        final String fileName = '$idItem${p.extension(file.path)}';
-        TaskSnapshot taskSnapshot = await _storage.ref('/items/$fileName').putFile(
-            file,
-            SettableMetadata(
-                contentType:
-                    'image/${p.extension(file.path).toString().replaceAll('.', '')}'));
-        updatedData['foto'] = await taskSnapshot.ref.getDownloadURL();
+
+        updatedData['foto'] = await uploadPhoto(
+            File(updatedData['foto_nueva']), idItem); // subimos nueva foto
       }
       updatedData.remove('foto_nueva');
       updatedData.addAll(

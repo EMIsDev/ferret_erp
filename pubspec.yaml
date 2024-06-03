@@ -48,6 +48,8 @@ dependencies:
   file_selector: ^1.0.3
   firebase_storage: ^11.7.7
   isolate_handler: ^1.0.2
+  uuid: ^4.4.0
+  path: ^1.9.0
 
 
 dev_dependencies:
@@ -67,9 +69,9 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-     - assets/MOCK_DATA_items.json
-     - assets/MOCK_DATA_empleados.json
-     - assets/no-image.webp
+    - assets/MOCK_DATA_items.json
+    - assets/MOCK_DATA_empleados.json
+    - assets/no-image.webp
 
   #   - images/a_dot_ham.jpeg
 

@@ -1,3 +1,4 @@
+import 'package:ferret_erp/features/inventario/components/item_form.dart';
 import 'package:flutter/material.dart';
 
 class AgregarItemPage extends StatefulWidget {
@@ -10,6 +11,15 @@ class AgregarItemPage extends StatefulWidget {
 class _AgregarItemPageState extends State<AgregarItemPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Column(children: [ItemForm()]);
+  }
+
+  void refreshDropDown({String idTrabajador = ''}) {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
