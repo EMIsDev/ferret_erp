@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
 
 class ItemsController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -64,12 +65,15 @@ class ItemsController {
     try {
       if (photoUpdate) {
         final file = File(updatedData['foto']);
-        final String fileName = '$idItem.jpg';
-        final reference = _storage.ref().child('/items/$fileName');
-        final uploadTask = reference.putFile(file);
-        await uploadTask.whenComplete(() => print('Upload complete'));
-
-        updatedData['foto'] = await uploadTask.snapshot.ref.getDownloadURL();
+        final String fileName = '$idItem${p.extension(file.path)}';
+        TaskSnapshot taskSnapshot = await _storage.ref('/items/$fileName').putFile(
+            file,
+            SettableMetadata(
+                contentType:
+                    'image/${p.extension(file.path).toString().replaceAll('.', '')}'));
+        updatedData['foto'] = await taskSnapshot.ref
+            .getDownloadURL(); //eliminar la foto anterior, si tiene distinta extension se mantienen en la bd
+        print(updatedData['foto']);
       }
       updatedData.addAll(
           {'searchField': updatedData['nombre'].toString().toLowerCase()});
