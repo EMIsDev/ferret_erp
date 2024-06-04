@@ -65,7 +65,7 @@ class NewEmpleadoButton extends StatelessWidget {
             });
           }
         },
-        child: const Text('Actualizar'),
+        child: const Text('Agregar empleado'),
       )
     ]);
   }

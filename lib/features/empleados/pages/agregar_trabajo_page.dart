@@ -1,4 +1,4 @@
-import 'package:ferret_erp/features/empleados/components/empleado_dropdown_selector.dart';
+import 'package:ferret_erp/features/empleados/components/empleado_autocomplete_search.dart';
 import 'package:ferret_erp/features/empleados/empleados_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -142,7 +142,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: EmpleadoDropdownSelector(
+                        child: EmpleadoAutoCompleteSearch(
                           listaEmpleados: _listaEmpleados,
                           refreshNotifier: refreshNotifier,
                         ),
@@ -197,7 +197,11 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                     child: const Text('Agregar Trabajo'),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await empleadosController.addWorkToEmployee(
+                        _formKey.currentState!.save();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Procesando')),
+                        );
+                        empleadosController.addWorkToEmployee(
                             empleados: _listaEmpleadosSeleccionados,
                             trabajo: {
                               'descripcion': _descripcionController.text,
@@ -205,7 +209,36 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                               'hora_final_trabajo': _horaFinal,
                               'fecha_inicio': _selectedDateInicio,
                               'fecha_final': _selectedDateFinal,
-                            });
+                            }).then((value) {
+                          if (value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text('Actualizado'),
+                                backgroundColor: Colors.green,
+                                onVisible: () {
+                                  setState(() {
+                                    _formKey.currentState!.reset();
+
+                                    _descripcionController.clear();
+                                    _selectedDateInicio = DateTime.now();
+                                    _selectedDateFinal = DateTime.now();
+                                    _horaInicio = DateTime.now();
+                                    _horaFinal = DateTime.now();
+                                    _listaEmpleadosSeleccionados.clear();
+                                    _notifier.value = !_notifier.value;
+                                  });
+                                },
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Error'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        });
                       }
                     },
                   ),

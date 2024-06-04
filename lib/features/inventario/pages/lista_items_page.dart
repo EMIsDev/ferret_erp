@@ -43,8 +43,13 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
     }
   }
 
+  Future<bool> _deleteItem(
+      {required String idItem, required String fotoUrl}) async {
+    return await itemsController.deleteItem(idItem, fotoUrl);
+  }
+
   Future<void> _loadItems({required Map<String, dynamic> filters}) async {
-    print('Loading items...');
+    debugPrint('Loading items...');
     setState(() {
       _isLoading = true;
     });
@@ -102,54 +107,111 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                   }
                   var item = _items[index];
                   return SizedBox(
-                    height: 150, // Desired height for the card
-                    child: Center(
-                      child: ListTile(
-                          contentPadding:
-                              const EdgeInsets.all(10), // Add padding
-                          leading: SizedBox(
-                            width: 50, // Set a fixed width for the image
-                            height: 50, // Set a fixed height for the image
-                            child: item['foto'] != null
-                                ? Image.network(
-                                    item['foto'],
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.error);
-                                    },
-                                  )
-                                : Image.asset('assets/no-image.webp',
-                                    fit: BoxFit.cover),
-                          ),
-                          title: Text(
-                            item['nombre'].toString().toUpperCase(),
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                          subtitle: Text(
-                            'Cantidad: ${item['cantidad']}',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () {
-                                  Modular.to.navigate(
-                                    '/inventario/editarItem/${item['id']}',
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  // Delete item
-                                },
-                              ),
-                            ],
-                          )),
-                    ),
-                  );
+                      height: 150, // Desired height for the card
+                      child: Center(
+                        child: ListTile(
+                            contentPadding:
+                                const EdgeInsets.all(10), // Add padding
+                            leading: SizedBox(
+                              width: 50, // Set a fixed width for the image
+                              height: 50, // Set a fixed height for the image
+                              child: item['foto'] != null
+                                  ? Image.network(
+                                      item['foto'],
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(Icons.error);
+                                      },
+                                    )
+                                  : Image.asset('assets/images/no-image.webp',
+                                      fit: BoxFit.cover),
+                            ),
+                            title: Text(
+                              item['nombre'].toString().toUpperCase(),
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            subtitle: Text(
+                              'Cantidad: ${item['cantidad']}',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    Modular.to.navigate(
+                                      '/inventario/editarItem/${item['id']}',
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                                  title:
+                                                      const Text('ATENCIÓN!'),
+                                                  content: const Text(
+                                                      'Seguro que quieres eliminar al item?'),
+                                                  actions: [
+                                                    ElevatedButton(
+                                                        onPressed: () {
+                                                          Modular.to.pop();
+                                                        },
+                                                        child:
+                                                            const Text('No')),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        Modular.to.pop();
+                                                        debugPrint(item['id']);
+                                                        _deleteItem(
+                                                                idItem:
+                                                                    item['id'],
+                                                                fotoUrl: item[
+                                                                    'foto'])
+                                                            .then((value) {
+                                                          if (value) {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: const Text(
+                                                                    'Eliminado'),
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .green,
+                                                                onVisible: () {
+                                                                  setState(() {
+                                                                    _items.removeAt(
+                                                                        index);
+                                                                  });
+                                                                },
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              const SnackBar(
+                                                                content: Text(
+                                                                    'Error'),
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                              ),
+                                                            );
+                                                          }
+                                                        });
+                                                      },
+                                                      child: const Text('Si'),
+                                                    ),
+                                                  ]));
+                                    }),
+                              ],
+                            )),
+                      ));
                 },
               ),
             ),

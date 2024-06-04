@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
@@ -46,7 +47,7 @@ class ItemsController {
       items.add({'docRef': querySnapshot.docs.last});
       return items;
     } catch (e) {
-      print('Error retrieving items: $e');
+      debugPrint('Error retrieving items: $e');
       return [];
     }
   }
@@ -57,7 +58,7 @@ class ItemsController {
         try {
           await _storage.refFromURL(fotoUrl).delete();
         } catch (e) {
-          print('Error deleting photo: $e');
+          debugPrint('Error deleting photo: $e');
           // Continuar aunque haya fallado la eliminación de la foto
         }
       }
@@ -65,7 +66,7 @@ class ItemsController {
       await _firestore.collection('items').doc(itemId).delete();
       return true; // Delete successful
     } catch (e) {
-      print('Error deleting item: $e');
+      debugPrint('Error deleting item: $e');
       return false; // Delete failed
     }
   }
@@ -74,7 +75,7 @@ class ItemsController {
     try {
       var idItemBd = const Uuid().v4(); // generamos id para el item
 
-      print(idItemBd);
+      debugPrint(idItemBd);
       item['foto'] = await uploadPhoto(
           File(item['foto']), idItemBd); // subimos nueva foto con id generado
 
@@ -86,7 +87,7 @@ class ItemsController {
           .set(item); // elimino id para no repetir en la bd
       return idItemBd;
     } catch (e) {
-      print('Error adding empleado: $e');
+      debugPrint('Error adding empleado: $e');
       return '';
     }
   }
@@ -97,7 +98,7 @@ class ItemsController {
           await _firestore.collection('items').doc(itemId).get();
       return documentSnapshot.data() as Map<String, dynamic>;
     } catch (e) {
-      print('Error getting item by id: $e');
+      debugPrint('Error getting item by id: $e');
       return {};
     }
   }
@@ -112,7 +113,7 @@ class ItemsController {
                   'image/${p.extension(file.path).toString().replaceAll('.', '')}'));
       return taskSnapshot.ref.getDownloadURL();
     } catch (e) {
-      print('Error uploading photo: $e');
+      debugPrint('Error uploading photo: $e');
       return '';
     }
   }
@@ -121,8 +122,8 @@ class ItemsController {
       {required String idItem,
       required Map<String, dynamic> updatedData}) async {
     try {
-      print(updatedData['foto']);
-      print(updatedData['foto_nueva']);
+      debugPrint(updatedData['foto']);
+      debugPrint(updatedData['foto_nueva']);
 
       if (updatedData['foto_nueva'].isNotEmpty) {
         // eliminamos foto anterior
@@ -131,7 +132,7 @@ class ItemsController {
           try {
             await _storage.refFromURL(updatedData['foto']).delete();
           } catch (e) {
-            print('Error deleting photo: $e');
+            debugPrint('Error deleting photo: $e');
             // Continuar aunque haya fallado la eliminación de la foto
           }
         }
@@ -148,7 +149,7 @@ class ItemsController {
           .update(updatedData); // elimino id para no repetir en la bd
       return true; // Update successful
     } catch (e) {
-      print('Error updating item: $e');
+      debugPrint('Error updating item: $e');
       return false; // Update failed
     }
   }
@@ -165,7 +166,7 @@ class ItemsController {
         await _firestore.collection('items').add(item);
       }
     } catch (e) {
-      print('Error putting mock data: $e');
+      debugPrint('Error putting mock data: $e');
     }
   }
 
@@ -183,7 +184,7 @@ class ItemsController {
             .update({'searchField': item['nombre'].toString().toLowerCase()});
       }
     } catch (e) {
-      print('Error putting mock data: $e');
+      debugPrint('Error putting mock data: $e');
     }
   }
 }

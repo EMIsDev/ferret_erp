@@ -15,7 +15,7 @@ final empleadosController = EmpleadosController();
 class _EmpleadosPageState extends State<EmpleadosPage> {
   @override
   Widget build(BuildContext context) {
-    //print(Modular.routerDelegate.currentConfiguration?.routes);
+    //debugPrint(Modular.routerDelegate.currentConfiguration?.routes);
     return const RouterOutlet();
   }
 }

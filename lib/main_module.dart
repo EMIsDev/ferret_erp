@@ -61,13 +61,13 @@ class MyApp extends StatelessWidget {
 
     globalRouteService
         .allRoutes.forEach((e) {
-      print(e.name);
+      debugPrint(e.name);
       /*e.innerModules.forEach((key, value) {
-        print('  ${key.toString()}');
-        print(Modular.tryGet<ModuleRoute>(key: key.toString()));
+        debugPrint('  ${key.toString()}');
+        debugPrint(Modular.tryGet<ModuleRoute>(key: key.toString()));
       });*/
-      print(e.children);
-      //  print(Modular.routerConfig.routeInformationProvider);
+      debugPrint(e.children);
+      //  debugPrint(Modular.routerConfig.routeInformationProvider);
     });*/
     return MaterialApp.router(
       title: 'FerretERP',

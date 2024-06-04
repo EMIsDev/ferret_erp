@@ -53,6 +53,7 @@ class _MainPageState extends State<MainPage> {
             title: 'Inicio',
             onTap: (index, _) {
               sideMenuController.changePage(index);
+              _updateTitle('Inicio');
               Modular.to.navigate('/inicio/');
             },
             icon: const Icon(Icons.home),
@@ -115,10 +116,10 @@ class _MainPageState extends State<MainPage> {
                 icon: const Icon(Icons.list),
               ),
               SideMenuItem(
-                title: 'Agregar Items',
+                title: 'Agregar Item',
                 onTap: (index, _) {
                   sideMenuController.changePage(index);
-                  _updateTitle('Agregar Items');
+                  _updateTitle('Agregar Item');
                   Modular.to.navigate('/inventario/agregarItem/');
                 },
                 icon: const Icon(Icons.add),

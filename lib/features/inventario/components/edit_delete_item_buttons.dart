@@ -61,11 +61,11 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                     content: const Text('Actualizado'),
                     backgroundColor: Colors.green,
                     onVisible: () {
-                      print('se ha actualizado el item');
+                      debugPrint('se ha actualizado el item');
 
                       refreshNotifier(); //actualizar pagina item
 
-                      //print(Modular.to.navigateHistory.last.uri.toString());
+                      //debugPrint(Modular.to.navigateHistory.last.uri.toString());
                     },
                   ),
                 );
@@ -98,7 +98,7 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           Modular.to.pop();
-                          print(idItem);
+                          debugPrint(idItem);
                           _deleteItem(
                                   idItem: idItem,
                                   fotoUrl: itemFormController['foto'].text)

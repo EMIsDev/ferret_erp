@@ -110,7 +110,7 @@ class _ItemFormState extends State<ItemForm> {
                             ? Image.file(File(itemFormController['foto_nueva']))
                             : widget.item['foto'] != null
                                 ? Image.network(widget.item['foto'])
-                                : Image.asset('assets/no-image.webp'),
+                                : Image.asset('assets/images/no-image.webp'),
                         IconButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.amberAccent,

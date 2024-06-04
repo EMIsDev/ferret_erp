@@ -2,7 +2,7 @@ import 'package:ferret_erp/features/empleados/components/empleado_work_table.dar
 import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
 
-import '../components/empleado_dropdown_selector.dart';
+import '../components/empleado_autocomplete_search.dart';
 
 class HistorialTrabajo extends StatefulWidget {
   const HistorialTrabajo({super.key});
@@ -28,7 +28,7 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
               listaEmpleados = snapshot.data!;
               return Column(
                 children: [
-                  EmpleadoDropdownSelector(
+                  EmpleadoAutoCompleteSearch(
                       listaEmpleados: listaEmpleados,
                       refreshNotifier: refreshNotifier),
                   ValueListenableBuilder(

@@ -2,7 +2,7 @@ import 'package:ferret_erp/features/empleados/components/empleado_form.dart';
 import 'package:ferret_erp/features/empleados/empleados_controller.dart';
 import 'package:flutter/material.dart';
 
-import '../components/empleado_dropdown_selector.dart';
+import '../components/empleado_autocomplete_search.dart';
 
 class EditarEmpleado extends StatefulWidget {
   const EditarEmpleado({super.key});
@@ -28,7 +28,7 @@ class _EditarEmpleadoState extends State<EditarEmpleado> {
               listaEmpleados = snapshot.data!;
               return Column(
                 children: [
-                  EmpleadoDropdownSelector(
+                  EmpleadoAutoCompleteSearch(
                       listaEmpleados: listaEmpleados,
                       refreshNotifier: refreshNotifier,
                       selectedTrabajador: selectedTrabajador),

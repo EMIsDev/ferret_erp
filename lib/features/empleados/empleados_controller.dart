@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
@@ -17,7 +18,7 @@ class EmpleadosController {
 
       return empleados;
     } catch (e) {
-      print('Error getting empleados: $e');
+      debugPrint('Error getting empleados: $e');
       return [];
     }
   }
@@ -28,7 +29,7 @@ class EmpleadosController {
           await _firestore.collection('empleados').doc(empleadoId).get();
       return documentSnapshot.data() as Map<String, dynamic>;
     } catch (e) {
-      print('Error getting empleado by id: $e');
+      debugPrint('Error getting empleado by id: $e');
       return {};
     }
   }
@@ -52,14 +53,14 @@ class EmpleadosController {
                 dateFormat.format(data['final_trabajo'].toDate());
             dataList.add(data);
           } else {
-            print('Document with reference ${reference.path} not found.');
+            debugPrint('Document with reference ${reference.path} not found.');
           }
         }
         return dataList;
       }
       return null;
     } catch (e) {
-      print('Error getting empleado trabajos: $e');
+      debugPrint('Error getting empleado trabajos: $e');
       return null; // Indicate error
     }
   }
@@ -74,7 +75,7 @@ class EmpleadosController {
 
       return empleados;
     } catch (e) {
-      print('Error getting empleados: $e');
+      debugPrint('Error getting empleados: $e');
       return [];
     }
   }
@@ -84,7 +85,7 @@ class EmpleadosController {
       await _firestore.collection('empleados').add(empleado);
       return true;
     } catch (e) {
-      print('Error adding empleado: $e');
+      debugPrint('Error adding empleado: $e');
       return false;
     }
   }
@@ -99,7 +100,7 @@ class EmpleadosController {
           .update(updatedData); // elimino id para no repetir en la bd
       return true; // Update successful
     } catch (e) {
-      print('Error updating empleado: $e');
+      debugPrint('Error updating empleado: $e');
       return false; // Update failed
     }
   }
@@ -109,12 +110,12 @@ class EmpleadosController {
       await _firestore.collection('empleados').doc(empleadoId).delete();
       return true; // Delete successful
     } catch (e) {
-      print('Error deleting empleado: $e');
+      debugPrint('Error deleting empleado: $e');
       return false; // Delete failed
     }
   }
 
-  Future<void> addWorkToEmployee(
+  Future<bool> addWorkToEmployee(
       {required List<Map<String, dynamic>> empleados,
       required Map<String, dynamic> trabajo}) async {
     try {
@@ -151,8 +152,10 @@ class EmpleadosController {
           'lista_trabajos': FieldValue.arrayUnion([trabajoRef])
         });
       }
+      return true;
     } catch (e) {
-      print('Error adding work to employee: $e');
+      debugPrint('Error adding work to employee: $e');
+      return false;
     }
   }
 
@@ -169,7 +172,7 @@ class EmpleadosController {
         await _firestore.collection('empleados').add(item);
       }
     } catch (e) {
-      print('Error putting mock data: $e');
+      debugPrint('Error putting mock data: $e');
     }
   }
 
@@ -187,7 +190,7 @@ class EmpleadosController {
             .update({'searchField': item['nombre'].toString().toLowerCase()});
       }
     } catch (e) {
-      print('Error putting mock data: $e');
+      debugPrint('Error putting mock data: $e');
     }
   }
 }
