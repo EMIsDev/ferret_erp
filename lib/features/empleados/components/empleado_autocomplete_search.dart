@@ -23,10 +23,9 @@ class EmpleadoAutoCompleteSearch extends StatelessWidget {
               TextFormField(
                 controller: textEditingController,
                 focusNode: focusNode,
-                onFieldSubmitted: (String value) =>
-                    onFieldSubmitted.call(), // wrap onFieldSubmitted
+                onFieldSubmitted: (String value) => onFieldSubmitted.call(),
                 decoration: const InputDecoration(
-                  hintText: 'Buscar...',
+                  hintText: 'Buscar Empleado...',
                 ),
               )),
       optionsBuilder: (TextEditingValue textEditingValue) {

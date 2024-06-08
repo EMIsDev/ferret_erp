@@ -1,7 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
 class GlobalRoutesService {
-  static final List<ModuleRoute> moduleRoutes = [];
+  static final List<Map<String, dynamic>> moduleRoutes = [{}];
   late final dynamic mainModule;
   static final GlobalRoutesService _globalRoutesService =
       GlobalRoutesService._internal();
@@ -11,7 +11,7 @@ class GlobalRoutesService {
   }
   GlobalRoutesService._internal();
 
-  void addAllRoutes(List<ModuleRoute> routes) {
+  void addAllRoutes(List<Map<String, dynamic>> routes) {
     moduleRoutes.addAll(routes);
   }
 
@@ -19,7 +19,7 @@ class GlobalRoutesService {
     mainModule = module;
   }
 
-  List<ModuleRoute> get allRoutes => moduleRoutes;
+  List<Map<String, dynamic>> get allRoutes => moduleRoutes;
   void navigateTo(String route) {
     Modular.to.navigate(route);
   }
