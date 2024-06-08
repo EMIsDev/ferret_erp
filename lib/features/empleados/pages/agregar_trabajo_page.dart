@@ -12,19 +12,7 @@ class AgregarTrabajoPage extends StatefulWidget {
 
 class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
   final _formKey = GlobalKey<FormBuilderState>(); // Form key for validation
-  /*final _descripcionController =
-      TextEditingController(); // Controller for description
-  DateTime _selectedDateInicio = DateTime.now(); // Initial selected date
-  DateTime _selectedDateFinal = DateTime.now(); // Initial selected date
 
-  DateTime _horaInicio = DateTime.now(); // Initial time for work start
-  DateTime _horaFinal =
-      DateTime.now(); // Initial time for work endtial end date
-  final ValueNotifier<bool> _notifier = ValueNotifier(false);
-  final ValueNotifier<DateTime> _horaFinalNotifier =
-      ValueNotifier<DateTime>(DateTime.now());
-  final ValueNotifier<DateTime> _horaInicioNotifier =
-      ValueNotifier<DateTime>(DateTime.now());*/
   final ValueNotifier<bool> _notifier = ValueNotifier(false);
 
   Map<String, dynamic> selectedTrabajador = {};
@@ -74,8 +62,21 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                         decoration: const InputDecoration(
                             labelText: 'Fin Trabajo',
                             icon: Icon(Icons.calendar_today)),
-                        validator: FormBuilderValidators.compose(
-                            [FormBuilderValidators.required()]),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(),
+                          (val) {
+                            if (_formKey.currentState!.fields['inicio_trabajo']
+                                    ?.value !=
+                                null) {
+                              if (val!.isBefore(_formKey.currentState!
+                                  .fields['inicio_trabajo']?.value)) {
+                                return 'La fecha de fin no puede ser anterior a la fecha de inicio';
+                              }
+                            }
+
+                            return null;
+                          }
+                        ]),
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -130,20 +131,17 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                                     },
                                   ),
                                 )
-                              : const Center(child: Text('No items')),
+                              : const Center(
+                                  child: Text('No has agregado empleados')),
                         ),
                       ),
                       const SizedBox(height: 10),
                       MaterialButton(
                         color: Colors.amber,
                         onPressed: () {
-                          _formKey.currentState?.patchValue({
-                            'descripcion': 'Navegacion',
-                            'inicio_trabajo': DateTime(2024, 6, 9, 8),
-                            'final_trabajo': DateTime(2024, 6, 9, 10),
-                          });
-                          _formKey.currentState?.saveAndValidate();
-                          if (_formKey.currentState!.validate()) {
+                          if (_formKey.currentState!
+                                  .validate(focusOnInvalid: false) &&
+                              _listaEmpleadosSeleccionados.isNotEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Procesando')),
                             );
@@ -152,10 +150,10 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                                 trabajo: {
                                   'descripcion': _formKey.currentState!
                                       .fields['descripcion']!.value,
-                                  'hora_inicio_trabajo': _formKey.currentState!
+                                  'fecha_inicio_trabajo': _formKey.currentState!
                                       .fields['inicio_trabajo']!.value,
-                                  'hora_final_trabajo': _formKey.currentState!
-                                      .fields['final_trabajo']!.value,
+                                  'fecha_final_trabajo': _formKey.currentState!
+                                      .fields['fin_trabajo']!.value,
                                 }).then((value) {
                               if (value) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -186,6 +184,16 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                                 );
                               }
                             });
+                          } else {
+                            if (_listaEmpleadosSeleccionados.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Por favor agrege empleados al trabajo'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           }
 
                           debugPrint(_formKey.currentState?.value.toString());

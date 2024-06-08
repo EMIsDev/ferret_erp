@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 class EmpleadosController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final dateFormat = DateFormat('dd-MM-yyyy hh:mm');
-
+  final onlyDayFormat = DateFormat('dd-MM-yyyy');
+  final onlyHourFormat = DateFormat('hh:mm');
   Future<List<Object?>> getEmpleados() async {
     try {
       QuerySnapshot querySnapshot =
@@ -124,23 +125,27 @@ class EmpleadosController {
       required Map<String, dynamic> trabajo}) async {
     try {
       // Calculo de horas trabajadas
-      DateTime inicioTrabajo = trabajo['fecha_inicio'];
-      DateTime finalTrabajo = trabajo['fecha_final'];
-      int diasTrabajados = finalTrabajo.difference(inicioTrabajo).inDays;
+      DateTime inicioTrabajo = trabajo['fecha_inicio_trabajo'];
+      DateTime finalTrabajo = trabajo['fecha_final_trabajo'];
 
-      DateTime horaInicio = trabajo['hora_inicio_trabajo'];
-      DateTime horaFinal = trabajo['hora_final_trabajo'];
+      int diasTrabajados = finalTrabajo.difference(inicioTrabajo).inDays ==
+              0 //si es el mismo dia se suma 1
+          ? 1
+          : finalTrabajo.difference(inicioTrabajo).inDays;
+
       //calculate the total of hours worked with horaInicio and HoraFinal
-      int horasTrabajadas = horaFinal.difference(horaInicio).inHours;
-      int minutosTrabajados = horaFinal.difference(horaInicio).inMinutes % 60;
+      int horasTrabajadas = finalTrabajo.difference(inicioTrabajo).inHours;
+      int minutosTrabajados =
+          finalTrabajo.difference(inicioTrabajo).inMinutes % 60;
+
       // Crear trabajo con horas y minutos trabajados
       double horasTrabajadasDecimal =
           horasTrabajadas + (minutosTrabajados / 60);
 
       Map<String, dynamic> trabajoConHoras = {
         'descripcion': trabajo['descripcion'],
-        'inicio_trabajo': trabajo['fecha_inicio'],
-        'final_trabajo': trabajo['fecha_final'],
+        'inicio_trabajo': trabajo['fecha_inicio_trabajo'],
+        'final_trabajo': trabajo['fecha_final_trabajo'],
         'horas_trabajadas': DateFormat('HH:mm')
             .format(DateTime(0, 0, 0, horasTrabajadas, minutosTrabajados))
       };
