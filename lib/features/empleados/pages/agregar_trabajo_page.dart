@@ -214,266 +214,8 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
             );
           }
         });
-    /*Form(
-              key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(16.0),
-                children: <Widget>[
-                  TextFormField(
-                    decoration: const InputDecoration(labelText: 'Descripción'),
-                    controller: _descripcionController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una descripción';
-                      }
-                      return null;
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                        'Fecha Inicio: ${DateFormat('dd/MM/yyyy').format(_selectedDateInicio)}'),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () async {
-                      final selectedDate = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDateInicio,
-                        firstDate:
-                            DateTime.now().subtract(const Duration(days: 365)),
-                        lastDate: DateTime.now(),
-                        initialEntryMode: DatePickerEntryMode.input,
-                      );
-                      if (selectedDate != null) {
-                        _selectedDateInicio = selectedDate;
-                      }
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                        'Fecha Final: ${DateFormat('dd/MM/yyyy').format(_selectedDateFinal)}'),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () async {
-                      final selectedDate = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDateFinal,
-                        firstDate:
-                            DateTime.now().subtract(const Duration(days: 365)),
-                        lastDate: DateTime.now(),
-                        initialEntryMode: DatePickerEntryMode.input,
-                      );
-                      if (selectedDate != null) {
-                        setState(() {
-                          _selectedDateFinal = selectedDate;
-                        });
-                      }
-                    },
-                  ),
-                  Row(
-                    children: [
-                      const Text('Hora Inicio:'),
-                      TextButton(
-                        onPressed: () async {
-                          final selectedTime = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.fromDateTime(_horaInicio),
-                            initialEntryMode: TimePickerEntryMode.input,
-                          );
-                          if (selectedTime != null) {
-                            setState(() {
-                              _horaInicio = DateTime(
-                                  _selectedDateInicio.year,
-                                  _selectedDateInicio.month,
-                                  _selectedDateInicio.day,
-                                  selectedTime.hour,
-                                  selectedTime.minute);
-                            });
-                          }
-                        },
-                        child: Text(
-                            '${_horaInicio.hour.toString().padLeft(2, '0')}:${_horaInicio.minute.toString().padLeft(2, '0')}'),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Text('Hora Final:'),
-                      TextButton(
-                        onPressed: () async {
-                          final selectedTime = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.fromDateTime(_horaFinal),
-                            initialEntryMode: TimePickerEntryMode.input,
-                          );
-                          if (selectedTime != null) {
-                            setState(() {
-                              _horaFinal = DateTime(
-                                  _selectedDateInicio.year,
-                                  _selectedDateInicio.month,
-                                  _selectedDateInicio.day,
-                                  selectedTime.hour,
-                                  selectedTime.minute);
-                            });
-                          }
-                        },
-                        child: Text(
-                            '${_horaFinal.hour.toString().padLeft(2, '0')}:${_horaFinal.minute.toString().padLeft(2, '0')}'),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: EmpleadoAutoCompleteSearch(
-                          listaEmpleados: _listaEmpleados,
-                          refreshNotifier: refreshNotifier,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          if (selectedTrabajador.isNotEmpty) {
-                            _listaEmpleadosSeleccionados
-                                    .contains(selectedTrabajador)
-                                ? null
-                                : _listaEmpleadosSeleccionados
-                                    .add(selectedTrabajador);
-                            _notifier.value = !_notifier
-                                .value; //notificar cambios en la lista para actualizar UI lista
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: _notifier,
-                    builder: (context, value, child) => Container(
-                      height: 200,
-                      color: Colors.grey[200],
-                      child: _listaEmpleadosSeleccionados.isNotEmpty
-                          ? SingleChildScrollView(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: _listaEmpleadosSeleccionados.length,
-                                itemBuilder: (context, index) {
-                                  final item =
-                                      _listaEmpleadosSeleccionados[index];
-                                  return ListTile(
-                                    title: Text(item['nombre']),
-                                    trailing: IconButton(
-                                      icon: const Icon(Icons.delete),
-                                      onPressed: () {
-                                        _listaEmpleadosSeleccionados
-                                            .removeAt(index);
-                                        _notifier.value = !_notifier.value;
-                                      },
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : const Center(child: Text('No items')),
-                    ),
-                  ),
-                  ElevatedButton(
-                    child: const Text('Agregar Trabajo'),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Procesando')),
-                        );
-                        empleadosController.addWorkToEmployee(
-                            empleados: _listaEmpleadosSeleccionados,
-                            trabajo: {
-                              'descripcion': _descripcionController.text,
-                              'hora_inicio_trabajo': _horaInicio,
-                              'hora_final_trabajo': _horaFinal,
-                              'fecha_inicio': _selectedDateInicio,
-                              'fecha_final': _selectedDateFinal,
-                            }).then((value) {
-                          if (value) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Actualizado'),
-                                backgroundColor: Colors.green,
-                                onVisible: () {
-                                  setState(() {
-                                    _formKey.currentState!.reset();
-
-                                    _descripcionController.clear();
-                                    _selectedDateInicio = DateTime.now();
-                                    _selectedDateFinal = DateTime.now();
-                                    _horaInicio = DateTime.now();
-                                    _horaFinal = DateTime.now();
-                                    _listaEmpleadosSeleccionados.clear();
-                                    _notifier.value = !_notifier.value;
-                                  });
-                                },
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Error'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-            );*/
   }
 
-/*
-  ElevatedButton(
-                    child: const Text('Agregar Trabajo'),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Procesando')),
-                        );
-                        empleadosController.addWorkToEmployee(
-                            empleados: _listaEmpleadosSeleccionados,
-                            trabajo: {
-                              'descripcion': _descripcionController.text,
-                              'hora_inicio_trabajo': _horaInicio,
-                              'hora_final_trabajo': _horaFinal,
-                              'fecha_inicio': _selectedDateInicio,
-                              'fecha_final': _selectedDateFinal,
-                            }).then((value) {
-                          if (value) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Actualizado'),
-                                backgroundColor: Colors.green,
-                                onVisible: () {
-                                  setState(() {
-                                    _formKey.currentState!.reset();
-
-                                    _descripcionController.clear();
-                                    _selectedDateInicio = DateTime.now();
-                                    _selectedDateFinal = DateTime.now();
-                                    _horaInicio = DateTime.now();
-                                    _horaFinal = DateTime.now();
-                                    _listaEmpleadosSeleccionados.clear();
-                                    _notifier.value = !_notifier.value;
-                                  });
-                                },
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Error'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        }); */
   void refreshNotifier(dynamic objTrabajador) {
     selectedTrabajador = objTrabajador;
   }
@@ -484,3 +226,115 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
     super.dispose();
   }
 }
+/*
+ Flexible(
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formularioEstado,
+          child: Column(
+            children: [
+              ValueListenableBuilder(
+                valueListenable: _notifier,
+                builder: (context, value, child) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey)),
+                    child: Stack(
+                      alignment: AlignmentDirectional.bottomEnd,
+                      children: [
+                        itemFormController['foto_nueva'].isNotEmpty
+                            ? Image.file(File(itemFormController['foto_nueva']))
+                            : widget.item['foto'] != null
+                                ? Image.network(widget.item['foto'])
+                                : Image.asset('assets/images/no-image.webp'),
+                        IconButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amberAccent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              )),
+                          icon: Icon(
+                              widget.item['foto'] != null
+                                  ? Icons.edit
+                                  : Icons.add,
+                              color: Colors.grey),
+                          onPressed: () async {
+                            await _selectImage();
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey)),
+                  child: TextFormField(
+                    controller: itemFormController['nombre'],
+                    validator: (value) {
+                      if (value!.isNotEmpty) {
+                        return null; // todo ok
+                      } else {
+                        return 'Error en validacion'; // mal
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: widget.item['nombre'] ?? '',
+                      border: InputBorder.none,
+                      labelText: 'Nombre',
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey)),
+                  child: TextFormField(
+                    controller: itemFormController['cantidad'],
+                    validator: (value) {
+                      if (value!.isNotEmpty) {
+                        return null; // todo ok
+                      } else {
+                        // return 'Error en validacion'; // mal
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: widget.item['cantidad']?.toString() ?? '',
+                      border: InputBorder.none,
+                      labelText: 'cantidad',
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              Modular.to.path.toString().contains('editarItem')
+                  ? //enseñar botones con logica para actualizar o eliminar empleado
+                  EditDeleteItemButtonBar(
+                      idItem: widget.idItem,
+                      formularioEstado: _formularioEstado,
+                      itemFormController: itemFormController,
+                      refreshNotifier: refreshNotifier,
+                    )
+                  : NewItemButton(
+                      formularioEstado: _formularioEstado,
+                      refreshNotifier: refreshNotifier,
+                      itemFormController: itemFormController,
+                      item: widget.item)
+            ],
+          ),
+        ),
+      ),
+    );
+ */

@@ -109,7 +109,13 @@ class _ItemFormState extends State<ItemForm> {
                         itemFormController['foto_nueva'].isNotEmpty
                             ? Image.file(File(itemFormController['foto_nueva']))
                             : widget.item['foto'] != null
-                                ? Image.network(widget.item['foto'])
+                                ? Image.network(
+                                    widget.item['foto'],
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                          'assets/images/no-image.webp');
+                                    },
+                                  )
                                 : Image.asset('assets/images/no-image.webp'),
                         IconButton(
                           style: ElevatedButton.styleFrom(
@@ -142,10 +148,8 @@ class _ItemFormState extends State<ItemForm> {
                   child: TextFormField(
                     controller: itemFormController['nombre'],
                     validator: (value) {
-                      if (value!.isNotEmpty) {
-                        return null; // todo ok
-                      } else {
-                        return 'Error en validacion'; // mal
+                      if (value!.isEmpty) {
+                        return 'Error campo vacío';
                       }
                     },
                     decoration: InputDecoration(
@@ -165,11 +169,16 @@ class _ItemFormState extends State<ItemForm> {
                   child: TextFormField(
                     controller: itemFormController['cantidad'],
                     validator: (value) {
-                      if (value!.isNotEmpty) {
-                        return null; // todo ok
-                      } else {
-                        // return 'Error en validacion'; // mal
-                        return null;
+                      if (value!.isEmpty) {
+                        return 'Error campo vacío';
+                      }
+                      if (int.tryParse(value) == null) {
+                        if (double.tryParse(value) == null) {
+                          return 'Error campo tiene que ser un número';
+                        }
+                      }
+                      if (double.tryParse(value)! < 0) {
+                        return 'Error campo tiene que ser un número mayor a 0';
                       }
                     },
                     decoration: InputDecoration(
