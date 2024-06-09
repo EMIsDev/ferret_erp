@@ -100,15 +100,12 @@ class _CustomSideMenuState extends State<CustomSideMenu> {
   }
 
   Widget _buildMenuItem(IconData icon, String title, String route) {
-    return SizedBox(
-      width: double.infinity,
-      child: ListTile(
-        leading: SizedBox(width: 5, child: Icon(icon)),
-        title: Text(title),
-        onTap: () {
-          Modular.to.navigate(route);
-        },
-      ),
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () {
+        Modular.to.navigate(route);
+      },
     );
     /*  return InkWell(
       onTap: () {

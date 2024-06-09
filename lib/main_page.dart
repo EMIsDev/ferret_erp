@@ -1,5 +1,4 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
-import 'package:ferret_erp/custom_side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -24,9 +23,9 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
       body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        //_buildSideMenu(sideMenuController: sideMenuController),
+        _buildSideMenu(sideMenuController: sideMenuController),
         //_buildSideMenu2(),
-        CustomSideMenu(),
+        //CustomSideMenu(),
         const VerticalDivider(
           width: 0,
         ),
@@ -35,112 +34,22 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _buildSideMenu2() {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width * 0.25,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {},
-            ),
-            ListTile(
-              title: const Text('Inicio'),
-              onTap: () {
-                Modular.to.navigate('/inicio/');
-              },
-            ),
-            ExpansionTile(
-              title: const Text('Empleados'),
-              leading: const Icon(Icons.person),
-              children: <Widget>[
-                ListTile(
-                    title: const Text('Agregar Trabajo'),
-                    onTap: () {
-                      _updateTitle('Agregar Trabajo');
-                      Modular.to.navigate('/empleados/agregarTrabajo/');
-                    },
-                    leading: const Icon(
-                      Icons.handyman,
-                    )),
-                ListTile(
-                  title: const Text('Historial Trabajo'),
-                  onTap: () {
-                    _updateTitle('Historial Trabajo');
-                    Modular.to.navigate('/empleados/historialTrabajo/');
-                  },
-                  leading: const Icon(Icons.history),
-                ),
-                ListTile(
-                  title: const Text('Editar Empleado'),
-                  onTap: () {
-                    _updateTitle('Editar Empleado');
-
-                    Modular.to.navigate('/empleados/editarEmpleado/');
-                  },
-                  leading: const Icon(Icons.edit),
-                ),
-                ListTile(
-                  title: const Text('Agregar Empleado'),
-                  onTap: () {
-                    _updateTitle('Agregar Empleado');
-
-                    Modular.to.navigate('/empleados/agregarEmpleado/');
-                  },
-                  leading: const Icon(Icons.person_add),
-                ),
-              ],
-            ),
-            ExpansionTile(
-              title: const Text('Inventario'),
-              leading: const Icon(Icons.inventory),
-              children: <Widget>[
-                ListTile(
-                  title: const Text('Lista Item'),
-                  onTap: () {
-                    _updateTitle('Lista Item');
-                    Modular.to.navigate('/inventario/listaItems/');
-                  },
-                  leading: const Icon(Icons.list),
-                ),
-                ListTile(
-                  title: const Text('Agregar Item'),
-                  onTap: () {
-                    _updateTitle('Agregar Item');
-                    Modular.to.navigate('/inventario/agregarItem/');
-                  },
-                  leading: const Icon(Icons.add),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildSideMenu({required SideMenuController sideMenuController}) {
     return SideMenu(
+        controller: sideMenuController,
         style: SideMenuStyle(
             openSideMenuWidth: 215,
             // showTooltip: false,
+
             displayMode: SideMenuDisplayMode.auto,
             showHamburger: true,
             hoverColor: Colors.blue[100],
             selectedHoverColor: Colors.blue[100],
-            selectedColor: Colors.lightBlue,
-            selectedTitleTextStyle: const TextStyle(color: Colors.black),
-            selectedIconColor: Colors.black,
+            backgroundColor: Colors.grey[200]
             // decoration: BoxDecoration(
             //   borderRadius: BorderRadius.all(Radius.circular(10)),
             // ),
-            backgroundColor: Colors.grey[200]),
+            ),
         items: [
           SideMenuItem(
             title: 'Inicio',
@@ -219,8 +128,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ],
           )
-        ],
-        controller: sideMenuController);
+        ]);
   }
 
   void _updateTitle(String newTitle) {
