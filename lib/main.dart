@@ -70,6 +70,8 @@ class MyApp extends StatelessWidget {
       debugPrint(e.children);
       //  debugPrint(Modular.routerConfig.routeInformationProvider);
     });*/
+    Modular.setInitialRoute('/inicio/'); // Poner ruta inicial
+
     return MaterialApp.router(
       title: 'FerretERP',
       theme: ThemeData(

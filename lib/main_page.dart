@@ -1,4 +1,5 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
+import 'package:ferret_erp/custom_side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -23,12 +24,104 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
       body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        _buildSideMenu(sideMenuController: sideMenuController),
+        //_buildSideMenu(sideMenuController: sideMenuController),
+        //_buildSideMenu2(),
+        CustomSideMenu(),
         const VerticalDivider(
           width: 0,
         ),
         const Expanded(child: RouterOutlet())
       ]),
+    );
+  }
+
+  Widget _buildSideMenu2() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width * 0.25,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {},
+            ),
+            ListTile(
+              title: const Text('Inicio'),
+              onTap: () {
+                Modular.to.navigate('/inicio/');
+              },
+            ),
+            ExpansionTile(
+              title: const Text('Empleados'),
+              leading: const Icon(Icons.person),
+              children: <Widget>[
+                ListTile(
+                    title: const Text('Agregar Trabajo'),
+                    onTap: () {
+                      _updateTitle('Agregar Trabajo');
+                      Modular.to.navigate('/empleados/agregarTrabajo/');
+                    },
+                    leading: const Icon(
+                      Icons.handyman,
+                    )),
+                ListTile(
+                  title: const Text('Historial Trabajo'),
+                  onTap: () {
+                    _updateTitle('Historial Trabajo');
+                    Modular.to.navigate('/empleados/historialTrabajo/');
+                  },
+                  leading: const Icon(Icons.history),
+                ),
+                ListTile(
+                  title: const Text('Editar Empleado'),
+                  onTap: () {
+                    _updateTitle('Editar Empleado');
+
+                    Modular.to.navigate('/empleados/editarEmpleado/');
+                  },
+                  leading: const Icon(Icons.edit),
+                ),
+                ListTile(
+                  title: const Text('Agregar Empleado'),
+                  onTap: () {
+                    _updateTitle('Agregar Empleado');
+
+                    Modular.to.navigate('/empleados/agregarEmpleado/');
+                  },
+                  leading: const Icon(Icons.person_add),
+                ),
+              ],
+            ),
+            ExpansionTile(
+              title: const Text('Inventario'),
+              leading: const Icon(Icons.inventory),
+              children: <Widget>[
+                ListTile(
+                  title: const Text('Lista Item'),
+                  onTap: () {
+                    _updateTitle('Lista Item');
+                    Modular.to.navigate('/inventario/listaItems/');
+                  },
+                  leading: const Icon(Icons.list),
+                ),
+                ListTile(
+                  title: const Text('Agregar Item'),
+                  onTap: () {
+                    _updateTitle('Agregar Item');
+                    Modular.to.navigate('/inventario/agregarItem/');
+                  },
+                  leading: const Icon(Icons.add),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
