@@ -38,18 +38,18 @@ class _MainPageState extends State<MainPage> {
     return SideMenu(
         controller: sideMenuController,
         style: SideMenuStyle(
-            openSideMenuWidth: 215,
-            // showTooltip: false,
+          openSideMenuWidth: 215,
+          // showTooltip: false,
 
-            displayMode: SideMenuDisplayMode.auto,
-            showHamburger: true,
-            hoverColor: Colors.blue[100],
-            selectedHoverColor: Colors.blue[100],
-            backgroundColor: Colors.grey[200]
-            // decoration: BoxDecoration(
-            //   borderRadius: BorderRadius.all(Radius.circular(10)),
-            // ),
-            ),
+          displayMode: SideMenuDisplayMode.auto,
+          showHamburger: true,
+          hoverColor: Colors.blue[100],
+          selectedHoverColor: Colors.blue[100],
+          backgroundColor: Colors.grey[200],
+          // decoration: BoxDecoration(
+          //   borderRadius: BorderRadius.all(Radius.circular(10)),
+          // ),
+        ),
         items: [
           SideMenuItem(
             title: 'Inicio',
