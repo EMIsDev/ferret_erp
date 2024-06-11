@@ -40,10 +40,6 @@ class MainModule extends Module {
 
   @override
   void routes(r) {
-    //EmpleadosModule().routes(r);
-    //GlobalRoutesService globalRouteService = Modular.get(key: 'ListAllRoutes');
-
-    //globalRouteService.addAllRoutes(MainModule().moduleRoutes);
     r.child('/',
         child: (context) => const MainPage(),
         children: _moduleRoutes,
@@ -56,20 +52,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*final GlobalRoutesService globalRouteService =
-        Modular.get(key: 'ListAllRoutes');
-    globalRouteService.addAllRoutes(MainModule().moduleRoutes);
-
-    globalRouteService
-        .allRoutes.forEach((e) {
-      debugPrint(e.name);
-      /*e.innerModules.forEach((key, value) {
-        debugPrint('  ${key.toString()}');
-        debugPrint(Modular.tryGet<ModuleRoute>(key: key.toString()));
-      });*/
-      debugPrint(e.children);
-      //  debugPrint(Modular.routerConfig.routeInformationProvider);
-    });*/
     Modular.setInitialRoute('/inicio/'); // Poner ruta inicial
 
     return MaterialApp.router(
