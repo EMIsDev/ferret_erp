@@ -33,6 +33,7 @@ class MainModule extends Module {
 
   @override
   void binds(i) {
+    print('BINDS INICIO');
     i.addSingleton(GlobalRoutesService.new, key: 'ListAllRoutes');
     i.addInstance(FirebaseFirestore.instance);
     i.addInstance(FirebaseStorage.instance);
@@ -53,7 +54,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Modular.setInitialRoute('/inicio/'); // Poner ruta inicial
-
     return MaterialApp.router(
       title: 'FerretERP',
       theme: ThemeData(

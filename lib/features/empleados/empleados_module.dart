@@ -20,6 +20,7 @@ class EmpleadosModule extends Module {
 
   @override
   void routes(r) {
+    print('ROUTES EMPLEADOS');
     r.child('/',
         child: (context) => const EmpleadosPage(), children: _moduleRoutes);
   }

@@ -19,7 +19,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     SideMenuController sideMenuController = SideMenuController();
-
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
       body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [

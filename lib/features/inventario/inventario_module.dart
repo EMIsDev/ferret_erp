@@ -16,6 +16,8 @@ class InventarioModule extends Module {
   List<ChildRoute> get moduleRoutes => _moduleRoutes;
   @override
   void routes(r) {
+    print('ROUTES INVENTARIO');
+
     r.child('/',
         child: (context) => const ContabilidadPage(), children: _moduleRoutes);
   }
