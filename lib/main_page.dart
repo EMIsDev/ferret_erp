@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final Widget widgetChild;
+  const MainPage({super.key, required this.widgetChild});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -28,7 +29,8 @@ class _MainPageState extends State<MainPage> {
         const VerticalDivider(
           width: 0,
         ),
-        const Expanded(child: RouterOutlet())
+        Expanded(child: widget.widgetChild),
+        //  const Expanded(child: RouterOutlet())
       ]),
     );
   }

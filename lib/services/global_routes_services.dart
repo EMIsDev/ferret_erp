@@ -1,26 +1,37 @@
-import 'package:flutter_modular/flutter_modular.dart';
+import 'dart:io';
+import 'dart:nativewrappers/_internal/vm/lib/mirrors_patch.dart';
+
+import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as p;
 
 class GlobalRoutesService {
-  static final List<Map<String, dynamic>> moduleRoutes = [{}];
-  late final dynamic mainModule;
-  static final GlobalRoutesService _globalRoutesService =
-      GlobalRoutesService._internal();
+  static List<GoRoute> getAllRoutes() {
+    List<GoRoute> routes = [];
 
-  factory GlobalRoutesService() {
-    return _globalRoutesService;
+    final featuresDir = Directory('lib/features');
+    if (featuresDir.existsSync()) {
+      final featureFolders = featuresDir.listSync().whereType<Directory>();
+      for (var folder in featureFolders) {
+        final routesFile = File(p.join(folder.path, 'routes.dart'));
+        if (routesFile.existsSync()) {
+          final moduleRoute = _getRouteFromFile(routesFile);
+          routes.add(moduleRoute);
+        }
+      }
+    }
+
+    return routes;
   }
-  GlobalRoutesService._internal();
 
-  void addAllRoutes(List<Map<String, dynamic>> routes) {
-    moduleRoutes.addAll(routes);
-  }
-
-  void setMainModule(Module module) {
-    mainModule = module;
-  }
-
-  List<Map<String, dynamic>> get allRoutes => moduleRoutes;
-  void navigateTo(String route) {
-    Modular.to.navigate(route);
+  static GoRoute _getRouteFromFile(File file) {
+    // Utiliza reflexión para cargar y obtener rutas desde el archivo
+    final moduleName = p.basename(file.parent.path);
+    final libraryMirror = currentMirrorSystem().findLibrary(Symbol(moduleName));
+    final classMirror =
+        libraryMirror.declarations[Symbol('${moduleName}Routes')];
+    final routeMethod = classMirror.staticMembers[const Symbol('getRoute')]!;
+    final route =
+        classMirror.invoke(routeMethod.simpleName, []).reflectee as GoRoute;
+    return route;
   }
 }
