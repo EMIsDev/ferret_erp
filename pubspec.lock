@@ -459,6 +459,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  inventario_module:
+    dependency: "direct main"
+    description:
+      path: "lib/features/inventario_module"
+      relative: true
+    source: path
+    version: "0.0.1"
   isolate_handler:
     dependency: "direct main"
     description:

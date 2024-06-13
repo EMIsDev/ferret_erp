@@ -1,37 +1,66 @@
+import 'dart:convert';
 import 'dart:io';
-import 'dart:nativewrappers/_internal/vm/lib/mirrors_patch.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart' as p;
 
-class GlobalRoutesService {
-  static List<GoRoute> getAllRoutes() {
-    List<GoRoute> routes = [];
+Future<List<GoRoute>> getDynamicModuleRoutes() async {
+  final modulesDir = Directory('lib/features');
+  final modulePaths = modulesDir
+      .listSync(recursive: true)
+      .where((entity) => entity is Directory)
+      .map((entity) => entity.path)
+      .toList();
+  List<GoRoute> dynamicModuleRoutes = <GoRoute>[];
 
-    final featuresDir = Directory('lib/features');
-    if (featuresDir.existsSync()) {
-      final featureFolders = featuresDir.listSync().whereType<Directory>();
-      for (var folder in featureFolders) {
-        final routesFile = File(p.join(folder.path, 'routes.dart'));
-        if (routesFile.existsSync()) {
-          final moduleRoute = _getRouteFromFile(routesFile);
-          routes.add(moduleRoute);
-        }
+  for (final modulePath in modulePaths) {
+    final routesPath = '$modulePath/lib/routes.dart';
+    if (File(routesPath).existsSync()) {
+      try {
+        final moduleRoutes = await loadRoutesFromModule(routesPath);
+        dynamicModuleRoutes.addAll(moduleRoutes);
+      } catch (error) {
+        print('Error loading routes from $routesPath: $error');
+        // Handle the error gracefully (e.g., return an empty route)
       }
     }
-
-    return routes;
   }
 
-  static GoRoute _getRouteFromFile(File file) {
-    // Utiliza reflexión para cargar y obtener rutas desde el archivo
-    final moduleName = p.basename(file.parent.path);
-    final libraryMirror = currentMirrorSystem().findLibrary(Symbol(moduleName));
-    final classMirror =
-        libraryMirror.declarations[Symbol('${moduleName}Routes')];
-    final routeMethod = classMirror.staticMembers[const Symbol('getRoute')]!;
-    final route =
-        classMirror.invoke(routeMethod.simpleName, []).reflectee as GoRoute;
-    return route;
-  }
+  return dynamicModuleRoutes;
+}
+
+// Función auxiliar para cargar rutas desde un módulo
+Future<List<GoRoute>> loadRoutesFromModule(String routesPath) async {
+  final routesString = await rootBundle.loadString(routesPath);
+
+  // Procesar el contenido del archivo para extraer las rutas
+  final routesList = _parseRoutesFromContent(routesString);
+
+  // Convertir las rutas a objetos GoRoute
+  return routesList.map((routeMap) => _createGoRoute(routeMap)).toList();
+}
+
+// Función auxiliar para analizar el contenido del archivo y extraer las rutas (implementación básica)
+List<Map<String, dynamic>> _parseRoutesFromContent(String routesContent) {
+  // Analiza el contenido del archivo para extraer las rutas en formato de lista de mapas
+  // Puedes utilizar expresiones regulares o librerías de análisis de código fuente
+  // ...
+
+  // Ejemplo simplificado (asumiendo un formato JSON simple)
+  final routesList = jsonDecode(routesContent) as List<dynamic>;
+  return routesList.cast<Map<String, dynamic>>();
+}
+
+// Función auxiliar para crear objetos GoRoute (opcional si la estructura de rutas es diferente)
+GoRoute _createGoRoute(Map<String, dynamic> routeMap) {
+  final name = routeMap['name'] as String;
+  final path = routeMap['path'] as String;
+  final builder = routeMap['builder'] as Function; // May need casting
+
+  return GoRoute(
+    name: name,
+    path: path,
+    builder: builder as Widget Function(BuildContext, GoRouterState)?,
+  );
 }

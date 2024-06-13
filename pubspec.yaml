@@ -58,6 +58,9 @@ dependencies:
     path: ./lib/features/inicio_module
   empleados_module:
     path: ./lib/features/empleados_module
+  inventario_module:
+    path: ./lib/features/inventario_module
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

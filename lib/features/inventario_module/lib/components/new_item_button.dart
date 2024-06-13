@@ -1,30 +1,33 @@
-import 'package:ferret_erp/features/empleados/empleados_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:inventario_module/pages/editar_item_page.dart';
 
-class NewEmpleadoButton extends StatelessWidget {
+class NewItemButton extends StatelessWidget {
   final GlobalKey<FormState> formularioEstado;
-  final Map<String, TextEditingController> trabajadorFormController;
-  final Function({String idTrabajador}) refreshNotifier;
-  final Map<String, dynamic> empleado;
+  final Map<String, dynamic> itemFormController;
+  final Function() refreshNotifier;
+  final Map<String, dynamic> item;
 
-  const NewEmpleadoButton(
+  const NewItemButton(
       {super.key,
       required this.formularioEstado,
       required this.refreshNotifier,
-      required this.trabajadorFormController,
-      required this.empleado});
+      required this.itemFormController,
+      required this.item});
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
 
-    for (MapEntry e in trabajadorFormController.entries) {
-      res.putIfAbsent(e.key,
-          () => e.value?.text.isNotEmpty ? e.value.text : empleado[e.key]);
+    for (MapEntry e in itemFormController.entries) {
+      if (e.value is TextEditingController) {
+        res.putIfAbsent(
+            e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
+      }
     }
     return res;
   }
 
-  Future<bool> _agregarEmpleado(formData) async {
-    return await empleadosController.addEmpleado(formData);
+  Future<String> _agregarItem(formData) async {
+    return await itemsController.addItem(formData);
   }
 
   @override
@@ -40,16 +43,18 @@ class NewEmpleadoButton extends StatelessWidget {
               const SnackBar(content: Text('Procesando')),
             );
 
-            _agregarEmpleado(formData).then((value) {
-              if (value) {
+            _agregarItem(formData).then((idItemBd) {
+              if (idItemBd.isNotEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('Actualizado'),
+                    content: const Text('Agregado correctamente'),
                     backgroundColor: Colors.green,
                     onVisible: () {
-                      refreshNotifier();
+                      GoRouter.of(context)
+                          .go('/inventario/editarItem/$idItemBd');
+
                       //Navigator.of(context).pushReplacementNamed(
-                      //'/empleados/agregarTrabajo', // agregar ruta a info empleado directamente
+                      //  '/empleados/',
                       //);
                     },
                   ),
@@ -65,7 +70,7 @@ class NewEmpleadoButton extends StatelessWidget {
             });
           }
         },
-        child: const Text('Agregar empleado'),
+        child: const Text('CREAR'),
       )
     ]);
   }
