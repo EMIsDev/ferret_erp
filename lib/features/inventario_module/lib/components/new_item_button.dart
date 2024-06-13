@@ -50,8 +50,7 @@ class NewItemButton extends StatelessWidget {
                     content: const Text('Agregado correctamente'),
                     backgroundColor: Colors.green,
                     onVisible: () {
-                      GoRouter.of(context)
-                          .go('/inventario/editarItem/$idItemBd');
+                      GoRouter.of(context).go('/editarItem/$idItemBd');
 
                       //Navigator.of(context).pushReplacementNamed(
                       //  '/empleados/',
