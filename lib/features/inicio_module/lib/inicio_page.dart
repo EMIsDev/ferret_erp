@@ -14,12 +14,15 @@ class _InicioPageState extends State<InicioPage> {
       child: Column(
         children: [
           // Image of a ferret (assuming "hurones" refers to ferrets)
-          Image(
-            image: AssetImage(
-                'assets/images/huron.jpg'), // Replace with your image path
-            width: 500,
-            height: 500,
+          SizedBox(
+            width: 10,
+            height: 10,
+            child: Image(
+              image: AssetImage(
+                  'assets/images/huron.jpg'), // Replace with your image path
+            ),
           ),
+
           SizedBox(height: 16), // Spacing between image and text
           // Lorem Ipsum text about ferrets
           Text('''

@@ -4,6 +4,14 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
+        {
+            "name": "ferret_erp",
+            "request": "launch",
+            "type": "dart",
+            "cwd": "ferret_erp",
+            "program": "/lib/main.dart",
+        }/*,
         {
             "name": "ferret_erp",
             "request": "launch",
@@ -20,6 +28,6 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
-        }
+        }*/
     ]
 }
