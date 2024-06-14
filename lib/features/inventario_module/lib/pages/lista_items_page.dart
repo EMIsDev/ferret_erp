@@ -119,13 +119,25 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                                   ? Image.network(
                                       item['foto'],
                                       fit: BoxFit.cover,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.5,
                                       errorBuilder:
                                           (context, error, stackTrace) {
                                         return const Icon(Icons.error);
                                       },
                                     )
-                                  : Image.asset('assets/images/no-image.webp',
-                                      fit: BoxFit.cover),
+                                  : Image(
+                                      image: const AssetImage(
+                                          'assets/images/no-image.webp'),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.5,
+                                    ),
                             ),
                             title: Text(
                               item['nombre'].toString().toUpperCase(),

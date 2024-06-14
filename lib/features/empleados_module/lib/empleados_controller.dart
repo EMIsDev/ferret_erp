@@ -137,7 +137,8 @@ class EmpleadosController {
       int horasTrabajadas = finalTrabajo.difference(inicioTrabajo).inHours;
       int minutosTrabajados =
           finalTrabajo.difference(inicioTrabajo).inMinutes % 60;
-
+      print('Horas trabajadas: $horasTrabajadas');
+      print('Minutos trabajados: $minutosTrabajados');
       // Crear trabajo con horas y minutos trabajados
       double horasTrabajadasDecimal =
           horasTrabajadas + (minutosTrabajados / 60);
@@ -146,8 +147,7 @@ class EmpleadosController {
         'descripcion': trabajo['descripcion'],
         'inicio_trabajo': trabajo['fecha_inicio_trabajo'],
         'final_trabajo': trabajo['fecha_final_trabajo'],
-        'horas_trabajadas': DateFormat('HH:mm')
-            .format(DateTime(0, 0, 0, horasTrabajadas, minutosTrabajados))
+        'horas_trabajadas': '${horasTrabajadas}:${minutosTrabajados}h',
       };
 
       // Agregar trabajo a la coleccion de trabajos
