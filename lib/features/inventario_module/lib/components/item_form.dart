@@ -176,6 +176,7 @@ class _ItemFormState extends State<ItemForm> {
                       if (value!.isEmpty) {
                         return 'Error campo vacío';
                       }
+                      return null;
                     },
                     decoration: InputDecoration(
                       hintText: widget.item['nombre'] ?? '',
@@ -205,6 +206,7 @@ class _ItemFormState extends State<ItemForm> {
                       if (double.tryParse(value)! < 0) {
                         return 'Error campo tiene que ser un número mayor a 0';
                       }
+                      return null;
                     },
                     decoration: InputDecoration(
                       hintText: widget.item['cantidad']?.toString() ?? '',

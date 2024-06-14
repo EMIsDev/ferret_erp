@@ -13,13 +13,16 @@ class _InicioPageState extends State<InicioPage> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          // Image of a ferret (assuming "hurones" refers to ferrets)
           Image(
-            image: const AssetImage('assets/images/huron.jpg'),
-            width: MediaQuery.of(context).size.width * 0.5,
-            height: MediaQuery.of(context).size.height * 0.5,
+            image: AssetImage(
+                'assets/images/huron.jpg'), // Replace with your image path
+            width: 500,
+            height: 500,
           ),
-          const SizedBox(height: 16),
-          const Text('''
+          SizedBox(height: 16), // Spacing between image and text
+          // Lorem Ipsum text about ferrets
+          Text('''
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
           Maecenas nec odio et ante euismod elementum. 
           Donec euismod bibendum laoreet. 
