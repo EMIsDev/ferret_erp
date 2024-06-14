@@ -108,16 +108,40 @@ class _ItemFormState extends State<ItemForm> {
                       alignment: AlignmentDirectional.bottomEnd,
                       children: [
                         itemFormController['foto_nueva'].isNotEmpty
-                            ? Image.file(File(itemFormController['foto_nueva']))
+                            ? Image.file(
+                                File(itemFormController['foto_nueva']),
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
+                              )
                             : widget.item['foto'] != null
                                 ? Image.network(
                                     widget.item['foto'],
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return Image.asset(
-                                          'assets/images/no-image.webp');
+                                      return Image(
+                                        image: const AssetImage(
+                                            'assets/images/no-image.webp'),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.5,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.5,
+                                      );
                                     },
                                   )
-                                : Image.asset('assets/images/no-image.webp'),
+                                : Image(
+                                    image: const AssetImage(
+                                        'assets/images/no-image.webp'),
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
+                                  ),
                         IconButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.amberAccent,
