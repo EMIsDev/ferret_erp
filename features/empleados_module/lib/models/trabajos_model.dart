@@ -1,7 +1,7 @@
 class Trabajo {
   String descripcion;
-  String inicioTrabajo;
-  String finalTrabajo;
+  DateTime inicioTrabajo;
+  DateTime finalTrabajo;
   double horasTrabajadas;
   String id;
 
@@ -16,8 +16,8 @@ class Trabajo {
   factory Trabajo.empty() {
     return Trabajo(
       descripcion: '',
-      inicioTrabajo: '',
-      finalTrabajo: '',
+      inicioTrabajo: DateTime.now(),
+      finalTrabajo: DateTime.now(),
       id: '',
       horasTrabajadas: 0.0,
     );
@@ -25,15 +25,15 @@ class Trabajo {
 
   Trabajo.fromFirestoreJson(String docId, Map<String, dynamic> json)
       : descripcion = json['descripcion'] as String,
-        inicioTrabajo = json['inicio_trabajo'] as String,
-        finalTrabajo = json['final_trabajo'] as String,
+        inicioTrabajo = json['inicio_trabajo'] as DateTime,
+        finalTrabajo = json['final_trabajo'] as DateTime,
         horasTrabajadas = json['horas_trabajadas'] ?? 0.0,
         id = docId;
 
   Trabajo.fromJson(Map<String, dynamic> json)
       : descripcion = json['descripcion'] as String,
-        inicioTrabajo = json['inicio_trabajo'] as String,
-        finalTrabajo = json['final_trabajo'] as String,
+        inicioTrabajo = json['inicio_trabajo'] as DateTime,
+        finalTrabajo = json['final_trabajo'] as DateTime,
         horasTrabajadas = json['horas_trabajadas'] ?? 0.0,
         id = json['id'] ??
             ''; // id por defecto vacio porque podemos coger datos de un formulario por ejemplo sin id
@@ -62,11 +62,11 @@ class Trabajo {
     descripcion = value;
   }
 
-  set setInicioTrabajo(String value) {
+  set setInicioTrabajo(DateTime value) {
     inicioTrabajo = value;
   }
 
-  set setFinalTrabajo(String value) {
+  set setFinalTrabajo(DateTime value) {
     finalTrabajo = value;
   }
 
@@ -75,7 +75,7 @@ class Trabajo {
   }
 
   set setId(String value) {
-    this.id = value;
+    id = value;
   }
 
   @override

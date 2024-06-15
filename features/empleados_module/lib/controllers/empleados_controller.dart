@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:empleados_module/models/empleados_model.dart';
+import 'package:empleados_module/models/trabajos_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -118,11 +119,11 @@ class EmpleadosController {
 
   Future<bool> addWorkToEmployee(
       {required List<Map<String, dynamic>> empleados,
-      required Map<String, dynamic> trabajo}) async {
+      required Trabajo trabajo}) async {
     try {
       // Calculo de horas trabajadas
-      DateTime inicioTrabajo = trabajo['fecha_inicio_trabajo'];
-      DateTime finalTrabajo = trabajo['fecha_final_trabajo'];
+      DateTime inicioTrabajo = trabajo.inicioTrabajo;
+      DateTime finalTrabajo = trabajo.finalTrabajo;
 
       int diasTrabajados = finalTrabajo.difference(inicioTrabajo).inDays ==
               0 //si es el mismo dia se suma 1
@@ -139,16 +140,17 @@ class EmpleadosController {
       double horasTrabajadasDecimal =
           horasTrabajadas + (minutosTrabajados / 60);
 
-      Map<String, dynamic> trabajoConHoras = {
+      /*  Map<String, dynamic> trabajoConHoras = {
         'descripcion': trabajo['descripcion'],
         'inicio_trabajo': trabajo['fecha_inicio_trabajo'],
         'final_trabajo': trabajo['fecha_final_trabajo'],
         'horas_trabajadas': '${horasTrabajadas}:${minutosTrabajados}h',
-      };
-
+      };*/
+      trabajo.horasTrabajadas =
+          horasTrabajadasDecimal; // agregamos horas trabajadas al trabajo
       // Agregar trabajo a la coleccion de trabajos
       DocumentReference trabajoRef =
-          await _firestore.collection('trabajos').add(trabajoConHoras);
+          await _firestore.collection('trabajos').add(trabajo.toJsonBD());
       // Agregar referencia del trabajo a cada empleado
       for (Map<String, dynamic> empleado in empleados) {
         DocumentReference empleadoRef =

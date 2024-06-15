@@ -1,5 +1,6 @@
 import 'package:empleados_module/components/empleado_autocomplete_search.dart';
 import 'package:empleados_module/controllers/empleados_controller.dart';
+import 'package:empleados_module/models/trabajos_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -146,16 +147,22 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Procesando')),
                             );
-                            empleadosController.addWorkToEmployee(
-                                empleados: _listaEmpleadosSeleccionados,
-                                trabajo: {
-                                  'descripcion': _formKey.currentState!
-                                      .fields['descripcion']!.value,
-                                  'fecha_inicio_trabajo': _formKey.currentState!
-                                      .fields['inicio_trabajo']!.value,
-                                  'fecha_final_trabajo': _formKey.currentState!
-                                      .fields['fin_trabajo']!.value,
-                                }).then((value) {
+                            Trabajo trabajo = Trabajo(
+                              descripcion: _formKey
+                                  .currentState!.fields['descripcion']!.value,
+                              inicioTrabajo: _formKey.currentState!
+                                  .fields['inicio_trabajo']!.value,
+                              finalTrabajo: _formKey
+                                  .currentState!.fields['fin_trabajo']!.value,
+                              horasTrabajadas: 0.0,
+                              id: '',
+                            );
+
+                            empleadosController
+                                .addWorkToEmployee(
+                                    empleados: _listaEmpleadosSeleccionados,
+                                    trabajo: trabajo)
+                                .then((value) {
                               if (value) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -164,12 +171,6 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                                     onVisible: () {
                                       setState(() {
                                         _formKey.currentState!.reset();
-
-                                        /*_descripcionController.clear();
-                                    _selectedDateInicio = DateTime.now();
-                                    _selectedDateFinal = DateTime.now();
-                                    _horaInicio = DateTime.now();
-                                    _horaFinal = DateTime.now();*/
                                         _listaEmpleadosSeleccionados.clear();
                                         _notifier.value = !_notifier.value;
                                       });
