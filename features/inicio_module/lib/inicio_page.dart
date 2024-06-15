@@ -10,19 +10,19 @@ class InicioPage extends StatefulWidget {
 class _InicioPageState extends State<InicioPage> {
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
+    return SingleChildScrollView(
       child: Column(
         children: [
           // Image of a ferret (assuming "hurones" refers to ferrets)
           Image(
-            image: AssetImage(
+            image: const AssetImage(
                 'assets/images/huron.jpg'), // Replace with your image path
-            width: 500,
-            height: 500,
+            width: MediaQuery.of(context).size.width * 0.5,
+            height: MediaQuery.of(context).size.height * 0.5,
           ),
-          SizedBox(height: 16), // Spacing between image and text
+          const SizedBox(height: 16), // Spacing between image and text
           // Lorem Ipsum text about ferrets
-          Text('''
+          const Text('''
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
           Maecenas nec odio et ante euismod elementum. 
           Donec euismod bibendum laoreet. 

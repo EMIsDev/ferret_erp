@@ -1,6 +1,4 @@
-import 'package:ferret_erp/features/empleados_module/lib/empleados_module.dart';
-import 'package:ferret_erp/features/inicio_module/lib/inicio_module.dart';
-import 'package:ferret_erp/features/inventario_module/lib/inventario_module.dart';
+import 'package:empleados_module/empleados_module.dart';
 import 'package:ferret_erp/firebase_options.dart';
 import 'package:ferret_erp/main_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inicio_module/inicio_module.dart';
+import 'package:inventario_module/inventario_module.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

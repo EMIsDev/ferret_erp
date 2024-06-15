@@ -55,11 +55,11 @@ dependencies:
   go_router: ^14.1.4
   #Custom Module Packages
   inicio_module:
-    path: ./lib/features/inicio_module
+    path: ./features/inicio_module
   empleados_module:
-    path: ./lib/features/empleados_module
+    path: ./features/empleados_module
   inventario_module:
-    path: ./lib/features/inventario_module
+    path: ./features/inventario_module
 
 dev_dependencies:
   flutter_test:
