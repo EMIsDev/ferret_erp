@@ -37,7 +37,8 @@ class Empleado {
       : nombre = json['nombre'],
         apellido = json['apellido'],
         telefono = json['telefono'],
-        id = json['id'],
+        id = json['id'] ??
+            '', // id por defecto vacio porque podemos coger datos de un formulario por ejemplo sin id
         searchField =
             json['searchField'] ?? json['nombre'].toString().toLowerCase();
 

@@ -27,8 +27,8 @@ class NewEmpleadoButton extends StatelessWidget {
     return res;
   }
 
-  Future<bool> _agregarEmpleado(formData) async {
-    return await empleadosController.addEmpleado(formData);
+  Future<bool> _agregarEmpleado({required Empleado newEmpleado}) async {
+    return await empleadosController.addEmpleado(newEmpleado);
   }
 
   @override
@@ -38,13 +38,13 @@ class NewEmpleadoButton extends StatelessWidget {
         onPressed: () {
           if (formularioEstado.currentState!.validate()) {
             formularioEstado.currentState!.save();
-            final formData = getFormData();
-
+            final Map<String, dynamic> formData = getFormData();
+            Empleado newEmpleado = Empleado.fromJson(formData);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Procesando')),
             );
 
-            _agregarEmpleado(formData).then((value) {
+            _agregarEmpleado(newEmpleado: newEmpleado).then((value) {
               if (value) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

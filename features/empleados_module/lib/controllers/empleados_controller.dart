@@ -85,11 +85,9 @@ class EmpleadosController {
     }
   }
 
-  Future<bool> addEmpleado(Map<String, dynamic> empleado) async {
+  Future<bool> addEmpleado(Empleado empleado) async {
     try {
-      empleado
-          .addAll({'searchField': empleado['nombre'].toString().toLowerCase()});
-      await _firestore.collection('empleados').add(empleado);
+      await _firestore.collection('empleados').add(empleado.toJsonBD());
       return true;
     } catch (e) {
       debugPrint('Error adding empleado: $e');
