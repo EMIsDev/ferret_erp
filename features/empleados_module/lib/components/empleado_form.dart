@@ -55,11 +55,10 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
               child: TextFormField(
                 controller: trabajadorFormController['nombre'],
                 validator: (value) {
-                  if (value!.isNotEmpty) {
-                    return null; // todo ok
-                  } else {
-                    return 'Error en validacion'; // mal
+                  if (value!.isEmpty) {
+                    return 'Error campo vacío';
                   }
+                  return null;
                 },
                 decoration: InputDecoration(
                   hintText: widget.empleado.nombre,
@@ -78,11 +77,10 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
               child: TextFormField(
                 controller: trabajadorFormController['apellido'],
                 validator: (value) {
-                  if (value!.isNotEmpty) {
-                    return null; // todo ok
-                  } else {
-                    return null; // mal
+                  if (value!.isEmpty) {
+                    return 'Error campo vacío';
                   }
+                  return null;
                 },
                 decoration: InputDecoration(
                   hintText: widget.empleado.apellido,
@@ -101,11 +99,15 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
               child: TextFormField(
                 controller: trabajadorFormController['telefono'],
                 validator: (value) {
-                  if (value!.isNotEmpty) {
-                    return null; // todo ok
-                  } else {
-                    return null; // mal
+                  if (value!.isEmpty) {
+                    return 'Error campo vacío';
                   }
+                  if (int.tryParse(value) == null) {
+                    if (double.tryParse(value) == null) {
+                      return 'Error campo tiene que ser un número';
+                    }
+                  }
+                  return null;
                 },
                 decoration: InputDecoration(
                   hintText: widget.empleado.telefono,
