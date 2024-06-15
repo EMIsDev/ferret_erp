@@ -1,5 +1,5 @@
 import 'package:empleados_module/components/empleado_form.dart';
-import 'package:empleados_module/empleados_controller.dart';
+import 'package:empleados_module/controllers/empleados_controller.dart';
 import 'package:flutter/material.dart';
 
 class AgregarEmpleadoPage extends StatefulWidget {

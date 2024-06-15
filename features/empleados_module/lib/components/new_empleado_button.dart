@@ -1,3 +1,4 @@
+import 'package:empleados_module/models/empleados_model.dart';
 import 'package:empleados_module/pages/agregar_empleado_page.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +6,7 @@ class NewEmpleadoButton extends StatelessWidget {
   final GlobalKey<FormState> formularioEstado;
   final Map<String, TextEditingController> trabajadorFormController;
   final Function({String idTrabajador}) refreshNotifier;
-  final Map<String, dynamic> empleado;
+  final Empleado empleado;
 
   const NewEmpleadoButton(
       {super.key,
@@ -17,8 +18,11 @@ class NewEmpleadoButton extends StatelessWidget {
     final res = <String, dynamic>{};
 
     for (MapEntry e in trabajadorFormController.entries) {
-      res.putIfAbsent(e.key,
-          () => e.value?.text.isNotEmpty ? e.value.text : empleado[e.key]);
+      res.putIfAbsent(
+          e.key,
+          () => e.value?.text.isNotEmpty
+              ? e.value.text
+              : empleado.toJson()[e.key]);
     }
     return res;
   }

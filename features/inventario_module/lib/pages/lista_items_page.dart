@@ -49,7 +49,6 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
   }
 
   Future<void> _loadItems({required Map<String, dynamic> filters}) async {
-    debugPrint('Loading items...');
     setState(() {
       _isLoading = true;
     });

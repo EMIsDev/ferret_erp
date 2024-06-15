@@ -1,5 +1,6 @@
 import 'package:empleados_module/components/empleado_form.dart';
-import 'package:empleados_module/empleados_controller.dart';
+import 'package:empleados_module/controllers/empleados_controller.dart';
+import 'package:empleados_module/models/empleados_model.dart';
 import 'package:flutter/material.dart';
 
 import '../components/empleado_autocomplete_search.dart';
@@ -13,8 +14,8 @@ class EditarEmpleado extends StatefulWidget {
 
 List<Map<String, dynamic>> listaEmpleados = [];
 String selectedTrabajador = "";
-final empleadosController = EmpleadosController();
 ValueNotifier<bool> _notifier = ValueNotifier(false);
+final empleadosController = EmpleadosController();
 
 class _EditarEmpleadoState extends State<EditarEmpleado> {
   @override
@@ -45,11 +46,9 @@ class _EditarEmpleadoState extends State<EditarEmpleado> {
                                 if (snapshot.data == null) {
                                   return const Text('No hay datos');
                                 }
-                                final empleado =
-                                    snapshot.data as Map<String, dynamic>;
-                                empleado.addEntries([
-                                  MapEntry('id', selectedTrabajador),
-                                ]);
+                                //print(snapshot.data);
+                                final Empleado empleado =
+                                    snapshot.data as Empleado;
                                 return SingleChildScrollView(
                                   child: EmpleadoForm(
                                       refreshNotifier: refreshDropDown,

@@ -1,5 +1,5 @@
 import 'package:empleados_module/components/empleado_autocomplete_search.dart';
-import 'package:empleados_module/pages/agregar_empleado_page.dart';
+import 'package:empleados_module/controllers/empleados_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -18,6 +18,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
   Map<String, dynamic> selectedTrabajador = {};
   List<Map<String, dynamic>> _listaEmpleados = [];
   final List<Map<String, dynamic>> _listaEmpleadosSeleccionados = [];
+  final empleadosController = EmpleadosController();
 
   @override
   Widget build(BuildContext context) {

@@ -1,34 +1,37 @@
+import 'package:empleados_module/models/empleados_model.dart';
 import 'package:empleados_module/pages/agregar_empleado_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class EditDeleteEmpleadoButtonBar extends StatelessWidget {
-  final String idTrabajador;
   final GlobalKey<FormState> formularioEstado;
   final Map<String, TextEditingController> trabajadorFormController;
   final Function({String idTrabajador}) refreshNotifier;
-  final Map<String, dynamic> empleado;
+  final Empleado empleado;
 
   const EditDeleteEmpleadoButtonBar(
       {super.key,
-      required this.idTrabajador,
       required this.formularioEstado,
       required this.refreshNotifier,
       required this.trabajadorFormController,
       required this.empleado});
+
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
-
     for (MapEntry e in trabajadorFormController.entries) {
-      res.putIfAbsent(e.key,
-          () => e.value?.text.isNotEmpty ? e.value.text : empleado[e.key]);
+      res.putIfAbsent(
+          e.key,
+          () => e.value?.text.isNotEmpty
+              ? e.value.text
+              : empleado.toJson()[e.key]);
     }
+    res.putIfAbsent('id', () => empleado.id);
     return res;
   }
 
-  Future<bool> _updateEmpleado(formData) async {
+  Future<bool> _updateEmpleado({required Empleado updatedEmpleado}) async {
     return await empleadosController.updateEmpleado(
-        idTrabajador: idTrabajador, updatedData: formData);
+        updatedEmpleado: updatedEmpleado);
   }
 
   Future<bool> _deleteEmpleado(idTrabajado) async {
@@ -42,20 +45,21 @@ class EditDeleteEmpleadoButtonBar extends StatelessWidget {
         onPressed: () {
           if (formularioEstado.currentState!.validate()) {
             formularioEstado.currentState!.save();
-            final formData = getFormData();
+            final Map<String, dynamic> formData = getFormData();
+            Empleado updatedEmpleado = Empleado.fromJson(formData);
 
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Procesando')),
             );
 
-            _updateEmpleado(formData).then((value) {
+            _updateEmpleado(updatedEmpleado: updatedEmpleado).then((value) {
               if (value) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Actualizado'),
                     backgroundColor: Colors.green,
                     onVisible: () {
-                      refreshNotifier(idTrabajador: idTrabajador);
+                      refreshNotifier(idTrabajador: empleado.id);
                     },
                   ),
                 );
@@ -89,7 +93,7 @@ class EditDeleteEmpleadoButtonBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           context.pop();
-                          _deleteEmpleado(idTrabajador).then((value) {
+                          _deleteEmpleado(empleado.id).then((value) {
                             if (value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

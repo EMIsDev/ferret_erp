@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:empleados_module/models/empleados_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ class EmpleadosController {
   final dateFormat = DateFormat('dd-MM-yyyy hh:mm');
   final onlyDayFormat = DateFormat('dd-MM-yyyy');
   final onlyHourFormat = DateFormat('hh:mm');
+
   Future<List<Object?>> getEmpleados() async {
     try {
       QuerySnapshot querySnapshot =
@@ -24,14 +26,16 @@ class EmpleadosController {
     }
   }
 
-  Future<Map<String, dynamic>> getEmpleadoById({required empleadoId}) async {
+  Future<Empleado?> getEmpleadoById({required empleadoId}) async {
     try {
       DocumentSnapshot documentSnapshot =
           await _firestore.collection('empleados').doc(empleadoId).get();
-      return documentSnapshot.data() as Map<String, dynamic>;
+      Empleado empleado = Empleado.fromFirestoreJson(
+          documentSnapshot.id, documentSnapshot.data() as Map<String, dynamic>);
+      return empleado;
     } catch (e) {
       debugPrint('Error getting empleado by id: $e');
-      return {};
+      return null;
     }
   }
 
@@ -93,16 +97,10 @@ class EmpleadosController {
     }
   }
 
-  Future<bool> updateEmpleado(
-      {required String idTrabajador,
-      required Map<String, dynamic> updatedData}) async {
+  Future<bool> updateEmpleado({required Empleado updatedEmpleado}) async {
     try {
-      updatedData.addAll(
-          {'searchField': updatedData['nombre'].toString().toLowerCase()});
-      await _firestore
-          .collection('empleados')
-          .doc(idTrabajador)
-          .update(updatedData); // elimino id para no repetir en la bd
+      await _firestore.collection('empleados').doc(updatedEmpleado.id).update(
+          updatedEmpleado.toJsonBD()); // elimino id para no repetir en la bd
       return true; // Update successful
     } catch (e) {
       debugPrint('Error updating empleado: $e');
