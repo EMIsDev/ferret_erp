@@ -54,11 +54,9 @@ class _AgregarTrabajoFormState extends State<AgregarTrabajoForm> {
             MaterialButton(
               color: Theme.of(context).colorScheme.secondary,
               onPressed: () {
-                // Validate and save the form values
                 _formKey.currentState?.saveAndValidate();
                 debugPrint(_formKey.currentState?.value.toString());
 
-                // On another side, can access all field values without saving form with instantValues
                 _formKey.currentState?.validate();
                 debugPrint(_formKey.currentState?.instantValue.toString());
               },

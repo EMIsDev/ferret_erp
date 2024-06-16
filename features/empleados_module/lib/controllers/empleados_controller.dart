@@ -40,24 +40,53 @@ class EmpleadosController {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getEmpleadoTrabajos(
-      {required String empleadoId}) async {
+  Future<List<Map<String, dynamic>>?> getEmpleadoTrabajos({
+    required String empleadoId,
+    Map<String, dynamic>? filters,
+  }) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firestore.collection('empleados').doc(empleadoId).get();
       if (snapshot.data()?['lista_trabajos'] != null) {
         List<Map<String, dynamic>> dataList = [];
+
+        // Rango de fechas de los filtros
+        DateTime? startDate;
+        DateTime? endDate;
+        if (filters != null && filters.containsKey('rango_trabajo')) {
+          final DateTimeRange rangoTrabajo =
+              filters['rango_trabajo'] as DateTimeRange;
+          startDate = rangoTrabajo.start;
+          endDate = rangoTrabajo.end.add(const Duration(
+              days:
+                  1)); // agregamos un dia porque sino no toma el dia final, selecciona 1 antes.
+        }
+
         for (DocumentReference reference
             in snapshot.data()?['lista_trabajos']) {
           DocumentSnapshot snapshot = await reference.get();
           if (snapshot.exists) {
             Map<String, dynamic> data =
                 snapshot.data()! as Map<String, dynamic>;
-            data['inicio_trabajo'] =
-                dateFormat.format(data['inicio_trabajo'].toDate());
-            data['final_trabajo'] =
-                dateFormat.format(data['final_trabajo'].toDate());
-            dataList.add(data);
+            DateTime inicioTrabajo =
+                (data['inicio_trabajo'] as Timestamp).toDate();
+            DateTime finalTrabajo =
+                (data['final_trabajo'] as Timestamp).toDate();
+
+            // Filtrar por rango de fechas
+            if (startDate != null && endDate != null) {
+              if (inicioTrabajo.isAfter(startDate) &&
+                  finalTrabajo.isBefore(endDate)) {
+                data['inicio_trabajo'] = dateFormat.format(inicioTrabajo);
+                data['final_trabajo'] = dateFormat.format(finalTrabajo);
+                dataList.add(data);
+              }
+            } else {
+              // Si no hay filtro de fechas, añadir todos los trabajos
+              data['inicio_trabajo'] = dateFormat.format(inicioTrabajo);
+              data['final_trabajo'] = dateFormat.format(finalTrabajo);
+              dataList.add(data);
+            }
           } else {
             debugPrint('Document with reference ${reference.path} not found.');
           }

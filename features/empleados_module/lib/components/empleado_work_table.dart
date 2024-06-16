@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class EmpleadoWorkTable extends StatefulWidget {
   final String trabajadorId;
-
-  const EmpleadoWorkTable({super.key, required this.trabajadorId});
+  final Map<String, dynamic> filtersTrabajo;
+  const EmpleadoWorkTable(
+      {super.key, required this.trabajadorId, required this.filtersTrabajo});
 
   @override
   State<EmpleadoWorkTable> createState() => _EmpleadoWorkTableState();
@@ -17,7 +18,7 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: empleadosController.getEmpleadoTrabajos(
-          empleadoId: widget.trabajadorId),
+          empleadoId: widget.trabajadorId, filters: widget.filtersTrabajo),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           final listaTrabajos = snapshot.data ?? [];

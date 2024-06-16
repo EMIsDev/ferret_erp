@@ -38,6 +38,7 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
                         if (selectedTrabajador.isNotEmpty) {
                           return EmpleadoWorkTable(
                             trabajadorId: selectedTrabajador,
+                            filtersTrabajo: {},
                           );
                         } else {
                           return const SizedBox();

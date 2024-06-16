@@ -24,7 +24,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final router = GoRouter(
-      initialLocation: '/inicio',
+      //initialLocation: '/inicio',
+      initialLocation: '/historialTrabajo2',
       routes: [
         ShellRoute(
           builder: (context, state, child) {
