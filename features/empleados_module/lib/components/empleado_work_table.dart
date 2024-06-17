@@ -1,4 +1,5 @@
 import 'package:empleados_module/controllers/empleados_controller.dart';
+import 'package:empleados_module/models/trabajos_model.dart';
 import 'package:flutter/material.dart';
 
 class EmpleadoWorkTable extends StatefulWidget {
@@ -21,8 +22,8 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
           empleadoId: widget.trabajadorId, filters: widget.filtersTrabajo),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          final listaTrabajos = snapshot.data ?? [];
-
+          List<Trabajo> listaTrabajos = snapshot.data ?? [];
+          print(listaTrabajos);
           if (listaTrabajos.isEmpty) {
             return const Center(
               child: Text('No hay datos'),
@@ -55,11 +56,11 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
     );
   }
 
-  DataRow _buildWorkTableRow(Map<String, dynamic> trabajo) {
-    String descripcion = trabajo['descripcion'] ?? '';
-    String inicioTrabajo = trabajo['inicio_trabajo']?.toString() ?? '';
-    String finalTrabajo = trabajo['final_trabajo']?.toString() ?? '';
-    String totalHoras = trabajo['horas_trabajadas']?.toString() ?? '';
+  DataRow _buildWorkTableRow(Trabajo trabajo) {
+    String descripcion = trabajo.descripcion;
+    String inicioTrabajo = trabajo.inicioTrabajo.toString();
+    String finalTrabajo = trabajo.finalTrabajo.toString();
+    String totalHoras = trabajo.horasTrabajadas?.toString() ?? '';
 
     return DataRow(cells: [
       DataCell(Text(descripcion)),

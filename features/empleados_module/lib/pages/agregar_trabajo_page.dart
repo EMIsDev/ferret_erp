@@ -154,7 +154,6 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                                   .fields['inicio_trabajo']!.value,
                               finalTrabajo: _formKey
                                   .currentState!.fields['fin_trabajo']!.value,
-                              horasTrabajadas: 0.0,
                               id: '',
                             );
 

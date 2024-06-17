@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Trabajo {
   String descripcion;
   DateTime inicioTrabajo;
   DateTime finalTrabajo;
-  double horasTrabajadas;
+  Duration? horasTrabajadas;
   String id;
 
   Trabajo({
@@ -10,7 +12,7 @@ class Trabajo {
     required this.finalTrabajo,
     required this.id,
     required this.inicioTrabajo,
-    required this.horasTrabajadas,
+    this.horasTrabajadas,
   });
 
   factory Trabajo.empty() {
@@ -19,22 +21,22 @@ class Trabajo {
       inicioTrabajo: DateTime.now(),
       finalTrabajo: DateTime.now(),
       id: '',
-      horasTrabajadas: 0.0,
+      horasTrabajadas: const Duration(),
     );
   }
 
   Trabajo.fromFirestoreJson(String docId, Map<String, dynamic> json)
       : descripcion = json['descripcion'] as String,
-        inicioTrabajo = json['inicio_trabajo'] as DateTime,
-        finalTrabajo = json['final_trabajo'] as DateTime,
-        horasTrabajadas = json['horas_trabajadas'] ?? 0.0,
+        inicioTrabajo = (json['inicio_trabajo'] as Timestamp).toDate(),
+        finalTrabajo = (json['final_trabajo'] as Timestamp).toDate(),
+        horasTrabajadas = Duration(seconds: json['horas_trabajadas'] ?? 0),
         id = docId;
 
   Trabajo.fromJson(Map<String, dynamic> json)
       : descripcion = json['descripcion'] as String,
         inicioTrabajo = json['inicio_trabajo'] as DateTime,
         finalTrabajo = json['final_trabajo'] as DateTime,
-        horasTrabajadas = json['horas_trabajadas'] ?? 0.0,
+        horasTrabajadas = Duration(seconds: json['horas_trabajadas'] ?? 0),
         id = json['id'] ??
             ''; // id por defecto vacio porque podemos coger datos de un formulario por ejemplo sin id
 
@@ -43,7 +45,7 @@ class Trabajo {
     data['descripcion'] = descripcion;
     data['inicio_trabajo'] = inicioTrabajo;
     data['final_trabajo'] = finalTrabajo;
-    data['horas_trabajadas'] = horasTrabajadas;
+    data['horas_trabajadas'] = horasTrabajadas?.inSeconds ?? 0;
     data['id'] = id;
     return data;
   }
@@ -54,7 +56,7 @@ class Trabajo {
     data['descripcion'] = descripcion;
     data['inicio_trabajo'] = inicioTrabajo;
     data['final_trabajo'] = finalTrabajo;
-    data['horas_trabajadas'] = horasTrabajadas;
+    data['horas_trabajadas'] = horasTrabajadas?.inSeconds ?? 0;
     return data;
   }
 
@@ -70,7 +72,7 @@ class Trabajo {
     finalTrabajo = value;
   }
 
-  set setHorasTrabajadas(double value) {
+  set setHorasTrabajadas(Duration value) {
     horasTrabajadas = value;
   }
 

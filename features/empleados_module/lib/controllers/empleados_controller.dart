@@ -40,7 +40,7 @@ class EmpleadosController {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getEmpleadoTrabajos({
+  Future<List<Trabajo>?> getEmpleadoTrabajos({
     required String empleadoId,
     Map<String, dynamic>? filters,
   }) async {
@@ -49,7 +49,7 @@ class EmpleadosController {
           await _firestore.collection('empleados').doc(empleadoId).get();
       if (snapshot.data()?['lista_trabajos'] != null) {
         List<Map<String, dynamic>> dataList = [];
-
+        List<Trabajo> listaTrabajos = [];
         // Rango de fechas de los filtros
         DateTime? startDate;
         DateTime? endDate;
@@ -66,32 +66,33 @@ class EmpleadosController {
             in snapshot.data()?['lista_trabajos']) {
           DocumentSnapshot snapshot = await reference.get();
           if (snapshot.exists) {
-            Map<String, dynamic> data =
-                snapshot.data()! as Map<String, dynamic>;
-            DateTime inicioTrabajo =
-                (data['inicio_trabajo'] as Timestamp).toDate();
-            DateTime finalTrabajo =
-                (data['final_trabajo'] as Timestamp).toDate();
+            print(snapshot.data()! as Map<String, dynamic>);
+            Trabajo trabajo = Trabajo.fromFirestoreJson(
+                snapshot.id, snapshot.data()! as Map<String, dynamic>);
+            print(trabajo);
+            //snapshot.data()! as Map<String, dynamic>;
 
             // Filtrar por rango de fechas
             if (startDate != null && endDate != null) {
-              if (inicioTrabajo.isAfter(startDate) &&
-                  finalTrabajo.isBefore(endDate)) {
-                data['inicio_trabajo'] = dateFormat.format(inicioTrabajo);
-                data['final_trabajo'] = dateFormat.format(finalTrabajo);
-                dataList.add(data);
+              if (trabajo.inicioTrabajo.isAfter(startDate) &&
+                  trabajo.finalTrabajo.isBefore(endDate)) {
+                //trabajo.inicioTrabajo = dateFormat.format(inicioTrabajo);
+                //trabajo.finalTrabajo = dateFormat.format(finalTrabajo);
+                //dataList.add(data);
+                listaTrabajos.add(trabajo);
               }
             } else {
               // Si no hay filtro de fechas, añadir todos los trabajos
-              data['inicio_trabajo'] = dateFormat.format(inicioTrabajo);
-              data['final_trabajo'] = dateFormat.format(finalTrabajo);
-              dataList.add(data);
+              //data['inicio_trabajo'] = dateFormat.format(inicioTrabajo);
+              //data['final_trabajo'] = dateFormat.format(finalTrabajo);
+              //dataList.add(data);
+              listaTrabajos.add(trabajo);
             }
           } else {
             debugPrint('Document with reference ${reference.path} not found.');
           }
         }
-        return dataList;
+        return listaTrabajos;
       }
       return null;
     } catch (e) {
@@ -161,22 +162,14 @@ class EmpleadosController {
 
       //calculate the total of hours worked with horaInicio and HoraFinal
       int horasTrabajadas = finalTrabajo.difference(inicioTrabajo).inHours;
-      int minutosTrabajados =
-          finalTrabajo.difference(inicioTrabajo).inMinutes % 60;
-      print('Horas trabajadas: $horasTrabajadas');
-      print('Minutos trabajados: $minutosTrabajados');
+      int minutosTrabajados = finalTrabajo.difference(inicioTrabajo).inMinutes;
       // Crear trabajo con horas y minutos trabajados
       double horasTrabajadasDecimal =
           horasTrabajadas + (minutosTrabajados / 60);
 
-      /*  Map<String, dynamic> trabajoConHoras = {
-        'descripcion': trabajo['descripcion'],
-        'inicio_trabajo': trabajo['fecha_inicio_trabajo'],
-        'final_trabajo': trabajo['fecha_final_trabajo'],
-        'horas_trabajadas': '${horasTrabajadas}:${minutosTrabajados}h',
-      };*/
-      trabajo.horasTrabajadas =
-          horasTrabajadasDecimal; // agregamos horas trabajadas al trabajo
+      trabajo.horasTrabajadas = Duration(
+          hours: horasTrabajadas,
+          minutes: minutosTrabajados); // agregamos horas trabajadas al trabajo
       // Agregar trabajo a la coleccion de trabajos
       DocumentReference trabajoRef =
           await _firestore.collection('trabajos').add(trabajo.toJsonBD());
