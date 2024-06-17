@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Trabajo {
   String descripcion;
@@ -60,26 +61,13 @@ class Trabajo {
     return data;
   }
 
-  set setDescripcion(String value) {
-    descripcion = value;
-  }
+  String get formattedInicioTrabajo =>
+      DateFormat('dd-MM-yyyy HH:mm').format(inicioTrabajo);
+  String get formattedFinalTrabajo =>
+      DateFormat('dd-MM-yyyy HH:mm').format(finalTrabajo);
 
-  set setInicioTrabajo(DateTime value) {
-    inicioTrabajo = value;
-  }
-
-  set setFinalTrabajo(DateTime value) {
-    finalTrabajo = value;
-  }
-
-  set setHorasTrabajadas(Duration value) {
-    horasTrabajadas = value;
-  }
-
-  set setId(String value) {
-    id = value;
-  }
-
+  String get formattedHorasTrabajadas =>
+      '${horasTrabajadas!.inHours.toString()}:${horasTrabajadas!.inMinutes.remainder(60).toString()}';
   @override
   String toString() {
     return 'Trabajo{descripcion: $descripcion, inicioTrabajo: $inicioTrabajo, finalTrabajo: $finalTrabajo, horasTrabajadas: $horasTrabajadas, id: $id}';

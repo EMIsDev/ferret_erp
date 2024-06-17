@@ -13,20 +13,6 @@ class EmpleadosController {
   final onlyDayFormat = DateFormat('dd-MM-yyyy');
   final onlyHourFormat = DateFormat('hh:mm');
 
-  Future<List<Object?>> getEmpleados() async {
-    try {
-      QuerySnapshot querySnapshot =
-          await _firestore.collection('empleados').get();
-      List<Object?> empleados =
-          querySnapshot.docs.map((doc) => doc.data()).toList();
-
-      return empleados;
-    } catch (e) {
-      debugPrint('Error getting empleados: $e');
-      return [];
-    }
-  }
-
   Future<Empleado?> getEmpleadoById({required empleadoId}) async {
     try {
       DocumentSnapshot documentSnapshot =
@@ -48,7 +34,6 @@ class EmpleadosController {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firestore.collection('empleados').doc(empleadoId).get();
       if (snapshot.data()?['lista_trabajos'] != null) {
-        List<Map<String, dynamic>> dataList = [];
         List<Trabajo> listaTrabajos = [];
         // Rango de fechas de los filtros
         DateTime? startDate;
@@ -66,26 +51,17 @@ class EmpleadosController {
             in snapshot.data()?['lista_trabajos']) {
           DocumentSnapshot snapshot = await reference.get();
           if (snapshot.exists) {
-            print(snapshot.data()! as Map<String, dynamic>);
             Trabajo trabajo = Trabajo.fromFirestoreJson(
                 snapshot.id, snapshot.data()! as Map<String, dynamic>);
-            print(trabajo);
-            //snapshot.data()! as Map<String, dynamic>;
 
             // Filtrar por rango de fechas
             if (startDate != null && endDate != null) {
               if (trabajo.inicioTrabajo.isAfter(startDate) &&
                   trabajo.finalTrabajo.isBefore(endDate)) {
-                //trabajo.inicioTrabajo = dateFormat.format(inicioTrabajo);
-                //trabajo.finalTrabajo = dateFormat.format(finalTrabajo);
-                //dataList.add(data);
                 listaTrabajos.add(trabajo);
               }
             } else {
               // Si no hay filtro de fechas, añadir todos los trabajos
-              //data['inicio_trabajo'] = dateFormat.format(inicioTrabajo);
-              //data['final_trabajo'] = dateFormat.format(finalTrabajo);
-              //dataList.add(data);
               listaTrabajos.add(trabajo);
             }
           } else {

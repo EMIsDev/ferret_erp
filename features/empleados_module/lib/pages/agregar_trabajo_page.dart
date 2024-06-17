@@ -4,6 +4,7 @@ import 'package:empleados_module/models/trabajos_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:intl/intl.dart';
 
 class AgregarTrabajoPage extends StatefulWidget {
   const AgregarTrabajoPage({super.key});
@@ -48,6 +49,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                         name: 'inicio_trabajo',
                         firstDate: DateTime(1970),
                         lastDate: DateTime(2100),
+                        format: DateFormat('dd-MM-yyyy'),
                         initialEntryMode: DatePickerEntryMode.input,
                         decoration: const InputDecoration(
                             labelText: 'Inicio Trabajo',
@@ -60,6 +62,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                         initialDate: DateTime.now(),
                         firstDate: DateTime(1970),
                         lastDate: DateTime(2100),
+                        format: DateFormat('dd-MM-yyyy'),
                         inputType: InputType.both,
                         decoration: const InputDecoration(
                             labelText: 'Fin Trabajo',

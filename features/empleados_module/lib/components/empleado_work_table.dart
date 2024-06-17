@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 class EmpleadoWorkTable extends StatefulWidget {
   final String trabajadorId;
   final Map<String, dynamic> filtersTrabajo;
-  const EmpleadoWorkTable(
-      {super.key, required this.trabajadorId, required this.filtersTrabajo});
+
+  const EmpleadoWorkTable({
+    Key? key,
+    required this.trabajadorId,
+    required this.filtersTrabajo,
+  }) : super(key: key);
 
   @override
   State<EmpleadoWorkTable> createState() => _EmpleadoWorkTableState();
@@ -17,31 +21,56 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<List<Trabajo>?>(
       future: empleadosController.getEmpleadoTrabajos(
-          empleadoId: widget.trabajadorId, filters: widget.filtersTrabajo),
+        empleadoId: widget.trabajadorId,
+        filters: widget.filtersTrabajo,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           List<Trabajo> listaTrabajos = snapshot.data ?? [];
-          print(listaTrabajos);
           if (listaTrabajos.isEmpty) {
             return const Center(
               child: Text('No hay datos'),
             );
           }
 
+          // Calcular el total de horas trabajadas
+          Duration totalHorasTrabajadas = Duration.zero;
+          for (var trabajo in listaTrabajos) {
+            totalHorasTrabajadas += trabajo.horasTrabajadas ?? const Duration();
+          }
+
+          // Crear las filas de la tabla
+          List<DataRow> rows = listaTrabajos
+              .map((trabajo) => _buildWorkTableRow(trabajo))
+              .toList();
+
+          // Agregar la última fila con el total de horas trabajadas
+          rows.add(DataRow(
+              color: WidgetStateProperty.all(Colors.black.withOpacity(0.1)),
+              cells: [
+                const DataCell(Text('Total Horas',
+                    style: TextStyle(fontWeight: FontWeight.bold))),
+                const DataCell(Text('')),
+                const DataCell(Text('')),
+                DataCell(
+                  Text('${_formatDuration(totalHorasTrabajadas)}h',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                )
+              ]));
+
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
+              headingRowColor: WidgetStateProperty.all(Colors.amber[200]),
               columns: const [
                 DataColumn(label: Text('Descripción')),
                 DataColumn(label: Text('Inicio')),
                 DataColumn(label: Text('Final')),
                 DataColumn(label: Text('Total Horas')),
               ],
-              rows: listaTrabajos
-                  .map((trabajo) => _buildWorkTableRow(trabajo))
-                  .toList(),
+              rows: rows,
             ),
           );
         } else {
@@ -57,21 +86,15 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
   }
 
   DataRow _buildWorkTableRow(Trabajo trabajo) {
-    String descripcion = trabajo.descripcion;
-    String inicioTrabajo = trabajo.inicioTrabajo.toString();
-    String finalTrabajo = trabajo.finalTrabajo.toString();
-    String totalHoras = trabajo.horasTrabajadas?.toString() ?? '';
-
     return DataRow(cells: [
-      DataCell(Text(descripcion)),
-      DataCell(Text(inicioTrabajo)),
-      DataCell(Text(finalTrabajo)),
-      DataCell(Text(totalHoras)),
+      DataCell(Text(trabajo.descripcion)),
+      DataCell(Text(trabajo.formattedInicioTrabajo)),
+      DataCell(Text(trabajo.formattedFinalTrabajo)),
+      DataCell(Text('${trabajo.formattedHorasTrabajadas}h')),
     ]);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  String _formatDuration(Duration duration) {
+    return '${duration.inHours}:${(duration.inMinutes.remainder(60)).toString().padLeft(2, '0')}';
   }
 }

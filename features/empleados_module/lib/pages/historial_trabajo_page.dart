@@ -35,6 +35,7 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      const SizedBox(height: 5),
                       Expanded(
                         flex: 2,
                         child: EmpleadoAutoCompleteSearch(
@@ -42,7 +43,6 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
                           refreshNotifier: refreshNotifier,
                         ),
                       ),
-                      const SizedBox(width: 16),
                       Expanded(
                         flex: 1,
                         child: FormBuilder(
@@ -80,6 +80,7 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
                 ]);
               } else {
                 return SizedBox(
@@ -95,9 +96,12 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
             valueListenable: _notifier,
             builder: (context, value, child) {
               if (selectedTrabajador.isNotEmpty) {
-                return EmpleadoWorkTable(
-                  trabajadorId: selectedTrabajador,
-                  filtersTrabajo: filters,
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: EmpleadoWorkTable(
+                    trabajadorId: selectedTrabajador,
+                    filtersTrabajo: filters,
+                  ),
                 );
               } else {
                 return const SizedBox();
