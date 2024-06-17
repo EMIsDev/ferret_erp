@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:inventario_module/components/edit_delete_item_buttons.dart';
 import 'package:inventario_module/components/new_item_button.dart';
 
-import '../inventario_controller.dart';
+import '../controllers/inventario_controller.dart';
 
 class ItemForm extends StatefulWidget {
   final Map<String, dynamic> item;

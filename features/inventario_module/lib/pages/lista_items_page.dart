@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventario_module/models/item_model.dart';
 
-import '../inventario_controller.dart';
+import '../controllers/inventario_controller.dart';
 
 class ListaItemsPage extends StatefulWidget {
   const ListaItemsPage({super.key});
@@ -12,7 +12,7 @@ class ListaItemsPage extends StatefulWidget {
 
 class _ListaItemsPageState extends State<ListaItemsPage> {
   final ScrollController _scrollController = ScrollController();
-  final List<Map<String, dynamic>> _items = List.empty(growable: true);
+  final List<Item> _items = List.empty(growable: true);
   final itemsController = ItemsController();
   final Map<String, dynamic> filters = {
     'search': '',
@@ -20,7 +20,7 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
     'lastDocument': null,
   };
   bool _isLoading = false;
-  DocumentSnapshot? _lastDocument;
+  String? _lastDocument;
 
   @override
   void initState() {
@@ -54,12 +54,10 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
     });
     filters['lastDocument'] = _lastDocument;
 
-    final List<Map<String, dynamic>> items =
-        await itemsController.getItems(filters: filters);
+    final List<Item> items = await itemsController.getItems(filters: filters);
     setState(() {
       if (items.isNotEmpty) {
-        _lastDocument = items.last['docRef'] as DocumentSnapshot;
-        items.removeLast(); // eliminar ultimo elemento que es docRef
+        _lastDocument = items.last.id;
       }
       _items.addAll(items);
 
@@ -106,17 +104,16 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                   }
                   var item = _items[index];
                   return SizedBox(
-                      height: 150, // Desired height for the card
+                      height: 150,
                       child: Center(
                         child: ListTile(
-                            contentPadding:
-                                const EdgeInsets.all(10), // Add padding
+                            contentPadding: const EdgeInsets.all(10),
                             leading: SizedBox(
-                              width: 50, // Set a fixed width for the image
-                              height: 50, // Set a fixed height for the image
-                              child: item['foto'] != null
+                              width: 50,
+                              height: 50,
+                              child: item.foto.isNotEmpty
                                   ? Image.network(
-                                      item['foto'],
+                                      item.foto,
                                       fit: BoxFit.cover,
                                       width: MediaQuery.of(context).size.width *
                                           0.5,
@@ -139,11 +136,11 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                                     ),
                             ),
                             title: Text(
-                              item['nombre'].toString().toUpperCase(),
+                              item.nombre.toString().toUpperCase(),
                               style: const TextStyle(fontSize: 18),
                             ),
                             subtitle: Text(
-                              'Cantidad: ${item['cantidad']}',
+                              'Cantidad: ${item.cantidad.toString()}',
                               style: const TextStyle(fontSize: 16),
                             ),
                             trailing: Row(
@@ -153,7 +150,7 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
                                     GoRouter.of(context)
-                                        .go('/editarItem/${item['id']}');
+                                        .go('/editarItem/${item.id}');
                                   },
                                 ),
                                 IconButton(
@@ -178,12 +175,11 @@ class _ListaItemsPageState extends State<ListaItemsPage> {
                                                       onPressed: () {
                                                         GoRouter.of(context)
                                                             .pop();
-                                                        debugPrint(item['id']);
+                                                        debugPrint(item.id);
                                                         _deleteItem(
-                                                                idItem:
-                                                                    item['id'],
-                                                                fotoUrl: item[
-                                                                    'foto'])
+                                                                idItem: item.id,
+                                                                fotoUrl:
+                                                                    item.foto)
                                                             .then((value) {
                                                           if (value) {
                                                             ScaffoldMessenger

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/item_form.dart';
-import '../inventario_controller.dart';
+import '../controllers/inventario_controller.dart';
 
 class EditarItem extends StatefulWidget {
   final String idItem;
@@ -18,8 +18,6 @@ final itemsController = ItemsController();
 class _EditarItemState extends State<EditarItem> {
   @override
   Widget build(BuildContext context) {
-    print('ID ITEM: ${widget.idItem}');
-
     return Column(
       children: [
         FutureBuilder(

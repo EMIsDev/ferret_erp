@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:inventario_module/models/item_model.dart';
 import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 
@@ -12,7 +13,7 @@ class ItemsController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  Future<List<Map<String, dynamic>>> getItems(
+  Future<List<Item>> getItems(
       {Map<String, dynamic> filters = const {
         'limit': 20,
         'search': '',
@@ -21,11 +22,15 @@ class ItemsController {
     try {
       String search = filters['search'] ?? '';
       int limit = filters['limit'] ?? 20;
-      DocumentSnapshot? lastDocument = filters['lastDocument'];
 
       Query query = _firestore.collection('items').limit(limit);
-      if (lastDocument != null) {
-        query = query.startAfterDocument(lastDocument);
+      if (filters['lastDocument'] != null) {
+        DocumentSnapshot doc = await _firestore
+            .collection('items')
+            .doc(filters['lastDocument'])
+            .get();
+        query = query.startAfterDocument(doc);
+        print('recargo');
       }
       if (search.isNotEmpty) {
         query = query
@@ -35,16 +40,14 @@ class ItemsController {
 
       QuerySnapshot querySnapshot = await query.get();
 
-      List<Map<String, dynamic>> items = querySnapshot.docs.map((doc) {
-        return {
-          ...doc.data() as Map<String, dynamic>,
-          'id': doc.id,
-        };
-      }).toList();
+      List<Item> items = querySnapshot.docs
+          .map((doc) => Item.fromFirestoreJson(
+              doc.id, doc.data() as Map<String, dynamic>))
+          .toList();
       if (items.isEmpty) {
         return List.empty();
       }
-      items.add({'docRef': querySnapshot.docs.last});
+      //  items.add({'docRef': querySnapshot.docs.last});
       return items;
     } catch (e) {
       debugPrint('Error retrieving items: $e');
