@@ -17,7 +17,7 @@ class _HistorialTrabajoState extends State<HistorialTrabajo> {
   List<Map<String, dynamic>> listaEmpleados = [];
   String selectedTrabajador = "";
   final empleadosController = EmpleadosController();
-  ValueNotifier<bool> _notifier = ValueNotifier(false);
+  final ValueNotifier<bool> _notifier = ValueNotifier(false);
   Map<String, dynamic> filters = {'rango_trabajo': null};
   final _formKey = GlobalKey<FormBuilderState>();
 

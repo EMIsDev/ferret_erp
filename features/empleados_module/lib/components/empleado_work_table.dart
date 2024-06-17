@@ -18,6 +18,7 @@ class EmpleadoWorkTable extends StatefulWidget {
 
 class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
   final empleadosController = EmpleadosController();
+  final ScrollController _horizontalScrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -60,17 +61,22 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
                 )
               ]));
 
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowColor: WidgetStateProperty.all(Colors.amber[200]),
-              columns: const [
-                DataColumn(label: Text('Descripción')),
-                DataColumn(label: Text('Inicio')),
-                DataColumn(label: Text('Final')),
-                DataColumn(label: Text('Total Horas')),
-              ],
-              rows: rows,
+          return Scrollbar(
+            controller: _horizontalScrollController,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              controller: _horizontalScrollController,
+              child: DataTable(
+                headingRowColor: WidgetStateProperty.all(Colors.amber[200]),
+                columns: const [
+                  DataColumn(label: Text('Descripción')),
+                  DataColumn(label: Text('Inicio')),
+                  DataColumn(label: Text('Final')),
+                  DataColumn(label: Text('Total Horas')),
+                ],
+                rows: rows,
+              ),
             ),
           );
         } else {
@@ -87,7 +93,15 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
 
   DataRow _buildWorkTableRow(Trabajo trabajo) {
     return DataRow(cells: [
-      DataCell(Text(trabajo.descripcion)),
+      DataCell(
+        ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 50, maxWidth: 200),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Text(trabajo.descripcion),
+          ),
+        ),
+      ),
       DataCell(Text(trabajo.formattedInicioTrabajo)),
       DataCell(Text(trabajo.formattedFinalTrabajo)),
       DataCell(Text('${trabajo.formattedHorasTrabajadas}h')),
@@ -96,5 +110,11 @@ class _EmpleadoWorkTableState extends State<EmpleadoWorkTable> {
 
   String _formatDuration(Duration duration) {
     return '${duration.inHours}:${(duration.inMinutes.remainder(60)).toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 }
