@@ -222,8 +222,7 @@ class _ItemFormState extends State<ItemForm> {
                   : NewItemButton(
                       formularioEstado: _formularioEstado,
                       refreshNotifier: refreshNotifier,
-                      itemFormController: itemFormController,
-                      item: widget.item.toJson())
+                      itemFormController: itemFormController)
             ],
           ),
         ),

@@ -6,23 +6,19 @@ class NewEmpleadoButton extends StatelessWidget {
   final GlobalKey<FormState> formularioEstado;
   final Map<String, TextEditingController> trabajadorFormController;
   final Function({String idTrabajador}) refreshNotifier;
-  final Empleado empleado;
 
-  const NewEmpleadoButton(
-      {super.key,
-      required this.formularioEstado,
-      required this.refreshNotifier,
-      required this.trabajadorFormController,
-      required this.empleado});
+  const NewEmpleadoButton({
+    super.key,
+    required this.formularioEstado,
+    required this.refreshNotifier,
+    required this.trabajadorFormController,
+  });
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
 
     for (MapEntry e in trabajadorFormController.entries) {
       res.putIfAbsent(
-          e.key,
-          () => e.value?.text.isNotEmpty
-              ? e.value.text
-              : empleado.toJson()[e.key]);
+          e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
     }
     return res;
   }

@@ -102,9 +102,7 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           GoRouter.of(context).pop();
-                          _deleteItem(
-                                  idItem: item.id,
-                                  fotoUrl: itemFormController['foto'].text)
+                          _deleteItem(idItem: item.id, fotoUrl: item.foto)
                               .then((value) {
                             if (value) {
                               ScaffoldMessenger.of(context).showSnackBar(

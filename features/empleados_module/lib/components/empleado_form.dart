@@ -131,7 +131,7 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
                     formularioEstado: _formularioEstado,
                     refreshNotifier: widget.refreshNotifier,
                     trabajadorFormController: trabajadorFormController,
-                    empleado: widget.empleado),
+                  ),
           ],
         ),
       ),

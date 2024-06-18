@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventario_module/models/item_model.dart';
 import 'package:inventario_module/pages/editar_item_page.dart';
 
 class NewItemButton extends StatelessWidget {
   final GlobalKey<FormState> formularioEstado;
   final Map<String, dynamic> itemFormController;
   final Function() refreshNotifier;
-  final Map<String, dynamic> item;
 
-  const NewItemButton(
-      {super.key,
-      required this.formularioEstado,
-      required this.refreshNotifier,
-      required this.itemFormController,
-      required this.item});
+  const NewItemButton({
+    super.key,
+    required this.formularioEstado,
+    required this.refreshNotifier,
+    required this.itemFormController,
+  });
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
 
@@ -26,8 +26,8 @@ class NewItemButton extends StatelessWidget {
     return res;
   }
 
-  Future<String> _agregarItem(formData) async {
-    return await itemsController.addItem(formData);
+  Future<String> _agregarItem({required Item item}) async {
+    return await itemsController.addItem(newItem: item);
   }
 
   @override
@@ -38,12 +38,12 @@ class NewItemButton extends StatelessWidget {
           if (formularioEstado.currentState!.validate()) {
             formularioEstado.currentState!.save();
             final formData = getFormData();
-
+            Item newItem = Item.fromJson(formData);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Procesando')),
             );
 
-            _agregarItem(formData).then((idItemBd) {
+            _agregarItem(item: newItem).then((idItemBd) {
               if (idItemBd.isNotEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

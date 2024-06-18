@@ -73,19 +73,15 @@ class ItemsController {
     }
   }
 
-  Future<String> addItem(Map<String, dynamic> item) async {
+  Future<String> addItem({required Item newItem}) async {
     try {
       var idItemBd = const Uuid().v4(); // generamos id para el item
-      if (item['foto'].isNotEmpty) {
-        item['foto'] = await uploadPhoto(
-            File(item['foto']), idItemBd); // subimos nueva foto con id generado
+      if (newItem.foto.isNotEmpty) {
+        newItem.foto = await uploadPhoto(
+            File(newItem.foto), idItemBd); // subimos nueva foto con id generado
       }
-      item.remove('foto_nueva');
-      item.addAll({'searchField': item['nombre'].toString().toLowerCase()});
-      await _firestore
-          .collection('items')
-          .doc(idItemBd)
-          .set(item); // elimino id para no poner ese campo en la bd
+      await _firestore.collection('items').doc(idItemBd).set(
+          newItem.toJsonBD()); // elimino id para no poner ese campo en la bd
       return idItemBd;
     } catch (e) {
       debugPrint('Error adding empleado: $e');
