@@ -30,7 +30,6 @@ class ItemsController {
             .doc(filters['lastDocument'])
             .get();
         query = query.startAfterDocument(doc);
-        print('recargo');
       }
       if (search.isNotEmpty) {
         query = query
@@ -94,14 +93,15 @@ class ItemsController {
     }
   }
 
-  Future<Map<String, dynamic>> getItemById({required String itemId}) async {
+  Future<Item> getItemById({required String itemId}) async {
     try {
       DocumentSnapshot documentSnapshot =
           await _firestore.collection('items').doc(itemId).get();
-      return documentSnapshot.data() as Map<String, dynamic>;
+      return Item.fromFirestoreJson(
+          documentSnapshot.id, documentSnapshot.data() as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Error getting item by id: $e');
-      return {};
+      return Item.empty();
     }
   }
 
@@ -121,34 +121,26 @@ class ItemsController {
   }
 
   Future<bool> updateItem(
-      {required String idItem,
-      required Map<String, dynamic> updatedData}) async {
+      {required Item updatedItem, required String newFoto}) async {
     try {
-      debugPrint(updatedData['foto']);
-      debugPrint(updatedData['foto_nueva']);
-
-      if (updatedData['foto_nueva'].isNotEmpty) {
+      if (newFoto.isNotEmpty) {
         // eliminamos foto anterior
 
-        if (updatedData['foto'].toString().isNotEmpty) {
+        if (updatedItem.foto.toString().isNotEmpty) {
           try {
-            await _storage.refFromURL(updatedData['foto']).delete();
+            await _storage.refFromURL(updatedItem.foto).delete();
           } catch (e) {
             debugPrint('Error deleting photo: $e');
             // Continuar aunque haya fallado la eliminación de la foto
           }
         }
 
-        updatedData['foto'] = await uploadPhoto(
-            File(updatedData['foto_nueva']), idItem); // subimos nueva foto
+        updatedItem.foto = await uploadPhoto(
+            File(newFoto), updatedItem.id); // subimos nueva foto
       }
-      updatedData.remove('foto_nueva');
-      updatedData.addAll(
-          {'searchField': updatedData['nombre'].toString().toLowerCase()});
-      await _firestore
-          .collection('items')
-          .doc(idItem)
-          .update(updatedData); // elimino id para no repetir en la bd
+
+      await _firestore.collection('items').doc(updatedItem.id).update(
+          updatedItem.toJsonBD()); // elimino id para no repetir en la bd
       return true; // Update successful
     } catch (e) {
       debugPrint('Error updating item: $e');

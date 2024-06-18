@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventario_module/models/item_model.dart';
 
 import '../pages/editar_item_page.dart';
 
+String newFoto = '';
+
 class EditDeleteItemButtonBar extends StatelessWidget {
-  final String idItem;
   final GlobalKey<FormState> formularioEstado;
   final Map<String, dynamic> itemFormController;
   final Function() refreshNotifier;
-
+  final Item item;
   const EditDeleteItemButtonBar({
     super.key,
-    required this.idItem,
+    required this.item,
     required this.refreshNotifier,
     required this.formularioEstado,
     required this.itemFormController,
@@ -20,22 +22,23 @@ class EditDeleteItemButtonBar extends StatelessWidget {
     final res = <String, dynamic>{};
 
     for (MapEntry e in itemFormController.entries) {
+      Map<String, dynamic> itemMap = item.toJson();
       if (e.value is TextEditingController) {
-        res.putIfAbsent(
-            e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
+        res.putIfAbsent(e.key,
+            () => e.value?.text.isNotEmpty ? e.value.text : itemMap[e.key]);
       } else {
-        res.putIfAbsent(
-            e.key, () => e.value); // guardamos el campo string de foto_nueva
+        newFoto = e.value.toString(); // guardamos el campo string de foto_nueva
+        //  res.putIfAbsent(e.key, () => e.value);
       }
     }
+    res.putIfAbsent('id', () => item.id);
+
     return res;
   }
 
-  Future<bool> _updateItem(formData) async {
+  Future<bool> _updateItem({required Item item}) async {
     return await itemsController.updateItem(
-      idItem: idItem,
-      updatedData: formData,
-    );
+        updatedItem: item, newFoto: newFoto);
   }
 
   Future<bool> _deleteItem(
@@ -51,11 +54,11 @@ class EditDeleteItemButtonBar extends StatelessWidget {
           if (formularioEstado.currentState!.validate()) {
             formularioEstado.currentState!.save();
             final formData = getFormData();
-
+            Item updatedItem = Item.fromJson(formData);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Procesando')),
             );
-            _updateItem(formData).then((value) {
+            _updateItem(item: updatedItem).then((value) {
               if (value) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -99,9 +102,8 @@ class EditDeleteItemButtonBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           GoRouter.of(context).pop();
-                          debugPrint(idItem);
                           _deleteItem(
-                                  idItem: idItem,
+                                  idItem: item.id,
                                   fotoUrl: itemFormController['foto'].text)
                               .then((value) {
                             if (value) {

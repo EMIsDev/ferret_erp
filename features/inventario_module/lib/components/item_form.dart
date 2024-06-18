@@ -5,18 +5,17 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:inventario_module/components/edit_delete_item_buttons.dart';
 import 'package:inventario_module/components/new_item_button.dart';
+import 'package:inventario_module/models/item_model.dart';
 
 import '../controllers/inventario_controller.dart';
 
 class ItemForm extends StatefulWidget {
-  final Map<String, dynamic> item;
-  final String idItem;
+  final Item item;
 
-  const ItemForm({
+  ItemForm({
     super.key,
-    this.idItem = '',
-    this.item = const {},
-  });
+    Item? item,
+  }) : item = item ?? Item.empty();
 
   @override
   State<ItemForm> createState() => _ItemFormState();
@@ -37,7 +36,7 @@ class _ItemFormState extends State<ItemForm> {
   @override
   void initState() {
     super.initState();
-    if (widget.item.isEmpty) {
+    if (widget.item.id.isEmpty) {
       // asegurar que el formulario esta limpio para agregar un nuevo item
       _clearFormFields();
     } else {
@@ -49,7 +48,7 @@ class _ItemFormState extends State<ItemForm> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      if (widget.item.isEmpty) {
+      if (widget.item.id.isEmpty) {
         //caso de formulario nuevo, la foto siempre se pondra en el campo foto
         itemFormController['foto'].text = image.path;
       }
@@ -61,21 +60,11 @@ class _ItemFormState extends State<ItemForm> {
     }
   }
 
-  Map<String, dynamic> getFormData() {
-    final res = <String, dynamic>{};
+  void _populateFormFields({required Item item}) {
+    Map<String, dynamic> itemMap = item.toJson();
     for (MapEntry e in itemFormController.entries) {
       if (e.value is TextEditingController) {
-        res.putIfAbsent(
-            e.key, () => e.value?.text.isNotEmpty ? e.value.text : '');
-      }
-    }
-    return res;
-  }
-
-  void _populateFormFields({required Map<String, dynamic> item}) {
-    for (MapEntry e in itemFormController.entries) {
-      if (e.value is TextEditingController) {
-        itemFormController[e.key]!.text = item[e.key].toString();
+        itemFormController[e.key]!.text = itemMap[e.key].toString();
       }
     }
   }
@@ -114,9 +103,9 @@ class _ItemFormState extends State<ItemForm> {
                                 height:
                                     MediaQuery.of(context).size.height * 0.5,
                               )
-                            : widget.item['foto'] != null
+                            : widget.item.foto.isNotEmpty
                                 ? Image.network(
-                                    widget.item['foto'],
+                                    widget.item.foto,
                                     width:
                                         MediaQuery.of(context).size.width * 0.5,
                                     height: MediaQuery.of(context).size.height *
@@ -149,7 +138,7 @@ class _ItemFormState extends State<ItemForm> {
                                 borderRadius: BorderRadius.circular(12),
                               )),
                           icon: Icon(
-                              widget.item['foto'] != null
+                              widget.item.foto.isNotEmpty
                                   ? Icons.edit
                                   : Icons.add,
                               color: Colors.grey),
@@ -179,7 +168,7 @@ class _ItemFormState extends State<ItemForm> {
                       return null;
                     },
                     decoration: InputDecoration(
-                      hintText: widget.item['nombre'] ?? '',
+                      hintText: widget.item.nombre,
                       border: InputBorder.none,
                       labelText: 'Nombre',
                     ),
@@ -209,7 +198,7 @@ class _ItemFormState extends State<ItemForm> {
                       return null;
                     },
                     decoration: InputDecoration(
-                      hintText: widget.item['cantidad']?.toString() ?? '',
+                      hintText: widget.item.cantidad.toString(),
                       border: InputBorder.none,
                       labelText: 'cantidad',
                     ),
@@ -225,7 +214,7 @@ class _ItemFormState extends State<ItemForm> {
                       .contains('editarItem')
                   ? //enseñar botones con logica para actualizar o eliminar empleado
                   EditDeleteItemButtonBar(
-                      idItem: widget.idItem,
+                      item: widget.item,
                       formularioEstado: _formularioEstado,
                       itemFormController: itemFormController,
                       refreshNotifier: refreshNotifier,
@@ -234,7 +223,7 @@ class _ItemFormState extends State<ItemForm> {
                       formularioEstado: _formularioEstado,
                       refreshNotifier: refreshNotifier,
                       itemFormController: itemFormController,
-                      item: widget.item)
+                      item: widget.item.toJson())
             ],
           ),
         ),

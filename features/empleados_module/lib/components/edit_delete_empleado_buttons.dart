@@ -18,12 +18,10 @@ class EditDeleteEmpleadoButtonBar extends StatelessWidget {
 
   Map<String, dynamic> getFormData() {
     final res = <String, dynamic>{};
+    Map<String, dynamic> empleadoMap = empleado.toJson();
     for (MapEntry e in trabajadorFormController.entries) {
-      res.putIfAbsent(
-          e.key,
-          () => e.value?.text.isNotEmpty
-              ? e.value.text
-              : empleado.toJson()[e.key]);
+      res.putIfAbsent(e.key,
+          () => e.value?.text.isNotEmpty ? e.value.text : empleadoMap[e.key]);
     }
     res.putIfAbsent('id', () => empleado.id);
     return res;

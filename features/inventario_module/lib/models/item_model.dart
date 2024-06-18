@@ -33,7 +33,8 @@ class Item {
 
   Item.fromJson(Map<String, dynamic> json)
       : nombre = json['nombre'],
-        cantidad = json['cantidad'],
+        cantidad = (double.tryParse(json['cantidad'])) ??
+            0.0, // del formulario obtenemos un string del numero
         foto = json['foto'],
         id = json['id'] ??
             '', // id por defecto vacio porque podemos coger datos de un formulario por ejemplo sin id

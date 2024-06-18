@@ -27,9 +27,9 @@ class _EmpleadoFormState extends State<EmpleadoForm> {
   };
 
   void _populateFormFields() {
+    Map<String, dynamic> empleadoMap = widget.empleado.toJson();
     for (MapEntry e in trabajadorFormController.entries) {
-      trabajadorFormController[e.key]!.text =
-          widget.empleado.toJson()[e.key].toString();
+      trabajadorFormController[e.key]!.text = empleadoMap[e.key].toString();
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/item_form.dart';
 import '../controllers/inventario_controller.dart';
+import '../models/item_model.dart';
 
 class EditarItem extends StatefulWidget {
   final String idItem;
@@ -24,10 +25,9 @@ class _EditarItemState extends State<EditarItem> {
           future: itemsController.getItemById(itemId: widget.idItem),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              item = snapshot.data!;
+              Item item = snapshot.data!;
               return ItemForm(
                 item: item,
-                idItem: widget.idItem,
               );
             } else {
               return SizedBox(

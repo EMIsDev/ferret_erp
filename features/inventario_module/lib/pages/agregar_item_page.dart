@@ -12,7 +12,7 @@ class AgregarItemPage extends StatefulWidget {
 class _AgregarItemPageState extends State<AgregarItemPage> {
   @override
   Widget build(BuildContext context) {
-    return const Column(children: [ItemForm()]);
+    return Column(children: [ItemForm()]);
   }
 
   void refreshDropDown({String idTrabajador = ''}) {
