@@ -23,7 +23,6 @@ final Map<String, dynamic> routes = {
           builder: (context, state) => const AgregarItemPage())
     },
     {
-      //  'icon': const Icon(Icons.edit),
       'sidebarView': false,
       'route': GoRoute(
           name: 'Editar Item',

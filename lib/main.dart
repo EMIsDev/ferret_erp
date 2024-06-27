@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final router = GoRouter(
       initialLocation: '/inicio',
-      //initialLocation: '/historialTrabajo',
       routes: [
         ShellRoute(
           builder: (context, state, child) {

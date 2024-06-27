@@ -49,7 +49,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                         name: 'inicio_trabajo',
                         firstDate: DateTime(1970),
                         lastDate: DateTime(2100),
-                        format: DateFormat('dd-MM-yyyy'),
+                        format: DateFormat('dd-MM-yyyy hh:mm'),
                         initialEntryMode: DatePickerEntryMode.input,
                         decoration: const InputDecoration(
                             labelText: 'Inicio Trabajo',
@@ -62,7 +62,7 @@ class _AgregarTrabajoPageState extends State<AgregarTrabajoPage> {
                         initialDate: DateTime.now(),
                         firstDate: DateTime(1970),
                         lastDate: DateTime(2100),
-                        format: DateFormat('dd-MM-yyyy'),
+                        format: DateFormat('dd-MM-yyyy hh:mm'),
                         inputType: InputType.both,
                         decoration: const InputDecoration(
                             labelText: 'Fin Trabajo',
