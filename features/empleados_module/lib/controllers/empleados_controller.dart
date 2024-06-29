@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:empleados_module/models/empleados_model.dart';
 import 'package:empleados_module/models/trabajos_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class EmpleadosController {
@@ -161,41 +158,6 @@ class EmpleadosController {
     } catch (e) {
       debugPrint('Error adding work to employee: $e');
       return false;
-    }
-  }
-
-  Future<void> putMockData() async {
-    try {
-      final data =
-          await rootBundle.loadString('assets/MOCK_DATA_empleados.json');
-      final List<dynamic> itemsList = jsonDecode(data);
-      final List<Map<String, dynamic>> items =
-          itemsList.cast<Map<String, dynamic>>();
-
-      for (var item in items) {
-        // Asigna un ID generado automáticamente
-        await _firestore.collection('empleados').add(item);
-      }
-    } catch (e) {
-      debugPrint('Error putting mock data: $e');
-    }
-  }
-
-  Future<void> insensitiveCase() async {
-    try {
-      Query query = _firestore.collection('empleados');
-
-      QuerySnapshot items = await query.get();
-
-      for (var item in items.docs) {
-        // Asigna un ID generado automáticamente
-        await _firestore
-            .collection('empleados')
-            .doc(item.id)
-            .update({'searchField': item['nombre'].toString().toLowerCase()});
-      }
-    } catch (e) {
-      debugPrint('Error putting mock data: $e');
     }
   }
 }
