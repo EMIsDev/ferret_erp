@@ -129,6 +129,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
+  empleados_module:
+    dependency: "direct main"
+    description:
+      path: "features/empleados_module"
+      relative: true
+    source: path
+    version: "0.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -349,6 +356,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.0.1"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: abec47eb8c8c36ebf41d0a4c64dbbe7f956e39a012b3aafc530e951bdc12fe3f
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.1.4"
   http:
     dependency: transitive
     description:
@@ -429,6 +444,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  inicio_module:
+    dependency: "direct main"
+    description:
+      path: "features/inicio_module"
+      relative: true
+    source: path
+    version: "0.0.1"
   intl:
     dependency: "direct main"
     description:
@@ -437,6 +459,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  inventario_module:
+    dependency: "direct main"
+    description:
+      path: "features/inventario_module"
+      relative: true
+    source: path
+    version: "0.0.1"
   isolate_handler:
     dependency: "direct main"
     description:
@@ -477,6 +506,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   matcher:
     dependency: transitive
     description:

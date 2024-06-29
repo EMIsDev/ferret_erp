@@ -1,76 +1,49 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ferret_erp/features/empleados/empleados_module.dart';
-import 'package:ferret_erp/features/inicio/inicio_module.dart';
-import 'package:ferret_erp/features/inventario/inventario_module.dart';
+import 'package:empleados_module/empleados_module.dart';
 import 'package:ferret_erp/firebase_options.dart';
 import 'package:ferret_erp/main_page.dart';
-import 'package:ferret_erp/services/global_routes_services.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:inicio_module/inicio_module.dart';
+import 'package:inventario_module/inventario_module.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(ModularApp(module: MainModule(), child: const MyApp()));
-}
-
-class MainModule extends Module {
-  final List<ModuleRoute> _moduleRoutes = [
-    ModuleRoute('/inicio/', module: InicioModule()),
-    ModuleRoute('/empleados/', module: EmpleadosModule()),
-    ModuleRoute('/inventario/', module: InventarioModule()),
-  ];
-  MainModule() {
-    GlobalRoutesService().setMainModule(this);
-  }
-  List<ModuleRoute> get moduleRoutes => _moduleRoutes;
-
-  @override
-  void binds(i) {
-    i.addSingleton(GlobalRoutesService.new, key: 'ListAllRoutes');
-    i.addInstance(FirebaseFirestore.instance);
-    i.addInstance(FirebaseStorage.instance);
-  }
-
-  @override
-  void routes(r) {
-    //EmpleadosModule().routes(r);
-    //GlobalRoutesService globalRouteService = Modular.get(key: 'ListAllRoutes');
-
-    //globalRouteService.addAllRoutes(MainModule().moduleRoutes);
-    r.child('/',
-        child: (context) => const MainPage(),
-        children: _moduleRoutes,
-        transition: TransitionType.fadeIn);
-  }
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  final List<Map<String, dynamic>> routesList = getAllRoutes();
 
   @override
   Widget build(BuildContext context) {
-    /*final GlobalRoutesService globalRouteService =
-        Modular.get(key: 'ListAllRoutes');
-    globalRouteService.addAllRoutes(MainModule().moduleRoutes);
-
-    globalRouteService
-        .allRoutes.forEach((e) {
-      debugPrint(e.name);
-      /*e.innerModules.forEach((key, value) {
-        debugPrint('  ${key.toString()}');
-        debugPrint(Modular.tryGet<ModuleRoute>(key: key.toString()));
-      });*/
-      debugPrint(e.children);
-      //  debugPrint(Modular.routerConfig.routeInformationProvider);
-    });*/
-    Modular.setInitialRoute('/inicio/'); // Poner ruta inicial
+    final router = GoRouter(
+      initialLocation: '/inicio',
+      routes: [
+        ShellRoute(
+          builder: (context, state, child) {
+            return MainPage(sideItems: routesList, widgetChild: child);
+          },
+          routes: extractRoutes(routesList).map((route) {
+            return route.copyWith(
+              pageBuilder: (context, state) {
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: route.builder!(context, state),
+                  transitionsBuilder: defaultPageTransition,
+                );
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
 
     return MaterialApp.router(
       title: 'FerretERP',
@@ -80,7 +53,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.amberAccent, brightness: Brightness.light)),
       debugShowCheckedModeBanner: false,
-      routerConfig: Modular.routerConfig,
+      routerConfig: router,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -90,6 +63,58 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('es', 'ES'),
       ],
+    );
+  }
+}
+
+List<Map<String, dynamic>> getAllRoutes() {
+  final List<Map<String, dynamic>> routes = [];
+  routes.add(getInicioModuleRoutes());
+
+  routes.add(getEmpleadosModuleRoutes());
+
+  routes.add(getInventarioModuleRoutes());
+  return routes;
+}
+
+List<GoRoute> extractRoutes(List<Map<String, dynamic>> routesList) {
+  List<GoRoute> goRoutes = [];
+  for (var module in routesList) {
+    var nestedRoutes = module['routes'] as List<dynamic>;
+    for (var nestedRoute in nestedRoutes) {
+      if (nestedRoute is Map<String, dynamic>) {
+        GoRoute? route = nestedRoute['route'] as GoRoute?;
+        if (route != null) {
+          goRoutes.add(route);
+        }
+      }
+    }
+  }
+  return goRoutes;
+}
+
+Widget defaultPageTransition(BuildContext context, Animation<double> animation,
+    Animation<double> secondaryAnimation, Widget child) {
+  return FadeTransition(
+    opacity: CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeIn,
+    ),
+    child: child,
+  );
+}
+
+extension GoRouteExtension on GoRoute {
+  GoRoute copyWith({
+    GoRouterPageBuilder? pageBuilder,
+  }) {
+    return GoRoute(
+      path: path,
+      name: name,
+      pageBuilder: pageBuilder ?? this.pageBuilder,
+      builder: builder,
+      routes: routes,
+      redirect: redirect,
     );
   }
 }

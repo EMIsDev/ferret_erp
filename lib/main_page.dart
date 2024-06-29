@@ -1,9 +1,12 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:go_router/go_router.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final Widget widgetChild;
+  final List<Map<String, dynamic>> sideItems;
+  const MainPage(
+      {super.key, required this.widgetChild, required this.sideItems});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -19,116 +22,84 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     SideMenuController sideMenuController = SideMenuController();
-
     return Scaffold(
       appBar: AppBar(title: Text(_title)),
       body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        _buildSideMenu(sideMenuController: sideMenuController),
-        //_buildSideMenu2(),
+        _buildSideMenu(
+            itemList: widget.sideItems, sideMenuController: sideMenuController),
         //CustomSideMenu(),
         const VerticalDivider(
           width: 0,
         ),
-        const Expanded(child: RouterOutlet())
+        Expanded(child: widget.widgetChild),
+        //  const Expanded(child: RouterOutlet())
       ]),
     );
   }
 
-  Widget _buildSideMenu({required SideMenuController sideMenuController}) {
+  Widget _buildSideMenu(
+      {required List<Map<String, dynamic>> itemList,
+      required SideMenuController sideMenuController}) {
     return SideMenu(
-        controller: sideMenuController,
-        style: SideMenuStyle(
-          openSideMenuWidth: 215,
-          // showTooltip: false,
+      controller: sideMenuController,
+      style: SideMenuStyle(
+        openSideMenuWidth: 215,
+        // showTooltip: false,
 
-          displayMode: SideMenuDisplayMode.auto,
-          showHamburger: true,
-          hoverColor: Colors.blue[100],
-          selectedHoverColor: Colors.blue[100],
-          backgroundColor: Colors.grey[200],
-          // decoration: BoxDecoration(
-          //   borderRadius: BorderRadius.all(Radius.circular(10)),
-          // ),
-        ),
-        items: [
-          SideMenuItem(
-            title: 'Inicio',
-            onTap: (index, _) {
-              sideMenuController.changePage(index);
-              _updateTitle('Inicio');
-              Modular.to.navigate('/inicio/');
-            },
-            icon: const Icon(Icons.home),
-          ),
-          SideMenuExpansionItem(
-            title: "Empleados",
-            icon: const Icon(Icons.person),
-            children: [
-              SideMenuItem(
-                title: 'Agregar Trabajo',
-                onTap: (index, _) {
-                  sideMenuController.changePage(index);
-                  _updateTitle('Agregar Trabajo');
-                  Modular.to.navigate('/empleados/agregarTrabajo/');
-                },
-                icon: const Icon(Icons.handyman),
-              ),
-              SideMenuItem(
-                title: 'Historial Trabajo',
-                onTap: (index, _) {
-                  sideMenuController.changePage(index);
-                  _updateTitle('Historial Trabajo');
-                  Modular.to.navigate('/empleados/historialTrabajo/');
-                },
-                icon: const Icon(Icons.history),
-              ),
-              SideMenuItem(
-                title: 'Editar Empleado',
-                onTap: (index, _) {
-                  _updateTitle('Editar Empleado');
-                  Modular.to.navigate('/empleados/editarEmpleado/');
+        displayMode: SideMenuDisplayMode.auto,
+        showHamburger: true,
+        hoverColor: Colors.blue[100],
+        selectedHoverColor: Colors.blue[100],
+        backgroundColor: Colors.grey[200],
+        // decoration: BoxDecoration(
+        //   borderRadius: BorderRadius.all(Radius.circular(10)),
+        // ),
+      ),
+      items: itemList.map((item) {
+        switch ((item['routes'] as List).length) {
+          case > 1:
+            return SideMenuExpansionItem(
+              title: item['nombre_modulo'] as String,
+              icon: item.containsKey('icon') && item['icon'] != null
+                  ? item['icon'] as Icon
+                  : null,
+              children: (item['routes'] as List)
+                  .where((subItem) => !(subItem.containsKey(
+                          'sidebarView') && // filtramos para conseguir los que si queremos que se  muestren en el sidebar
+                      subItem['sidebarView'] == false))
+                  .map<SideMenuItem>((subItem) {
+                return SideMenuItem(
+                  title: (subItem['route'] as GoRoute).name ?? 'No Name',
+                  onTap: (index, _) {
+                    sideMenuController.changePage(index);
+                    _updateTitle(
+                        (subItem['route'] as GoRoute).name ?? 'No Name');
+                    GoRouter.of(context).go((subItem['route'] as GoRoute).path);
+                  },
+                  icon: subItem.containsKey('icon') && subItem['icon'] != null
+                      ? subItem['icon'] as Icon
+                      : null,
+                );
+              }).toList(),
+            );
 
-                  sideMenuController.changePage(index);
-                },
-                icon: const Icon(Icons.edit),
-              ),
-              SideMenuItem(
-                title: 'Agregar Empleado',
-                onTap: (index, _) {
-                  _updateTitle('Agregar Empleado');
-
-                  sideMenuController.changePage(index);
-                  Modular.to.navigate('/empleados/agregarEmpleado/');
-                },
-                icon: const Icon(Icons.watch),
-              ),
-            ],
-          ),
-          SideMenuExpansionItem(
-            title: "Inventario",
-            icon: const Icon(Icons.inventory),
-            children: [
-              SideMenuItem(
-                title: 'Lista Item',
-                onTap: (index, _) {
-                  sideMenuController.changePage(index);
-                  _updateTitle('Lista Item');
-                  Modular.to.navigate('/inventario/listaItems/');
-                },
-                icon: const Icon(Icons.list),
-              ),
-              SideMenuItem(
-                title: 'Agregar Item',
-                onTap: (index, _) {
-                  sideMenuController.changePage(index);
-                  _updateTitle('Agregar Item');
-                  Modular.to.navigate('/inventario/agregarItem/');
-                },
-                icon: const Icon(Icons.add),
-              ),
-            ],
-          )
-        ]);
+          case == 1:
+            return SideMenuItem(
+              title: item['nombre_modulo'] as String,
+              onTap: (index, _) {
+                sideMenuController.changePage(index);
+                _updateTitle(item['nombre_modulo'] as String);
+                GoRouter.of(context)
+                    .go((item['routes'][0]['route'] as GoRoute).path);
+              },
+              icon: item['routes'][0].containsKey('icon') &&
+                      item['routes'][0]['icon'] != null
+                  ? item['routes'][0]['icon'] as Icon
+                  : null,
+            );
+        }
+      }).toList(),
+    );
   }
 
   void _updateTitle(String newTitle) {
@@ -137,15 +108,3 @@ class _MainPageState extends State<MainPage> {
     });
   }
 }
-
-/*
-for (final route in MainModule().moduleRoutes)
-          ListTile(
-            title: Text(route.name.replaceAll('/', '').toUpperCase()),
-            onTap: () {
-              Modular.to.pop(); // Close the drawer
-              _updateTitle(route.name.replaceAll('/', '').toUpperCase());
-              Modular.to.navigate(route.name);
-            },
-          ),
- */
